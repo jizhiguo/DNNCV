@@ -1,25 +1,223 @@
-<UI version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>QTGUIClass</class>
- <widget class="QDialog" name="QTGUIClass" >
-  <property name="objectName" >
-   <string notr="true">QTGUIClass</string>
-  </property>
-  <property name="geometry" >
+ <widget class="QDialog" name="QTGUIClass">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>1012</width>
+    <height>708</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="font">
+   <font>
+    <family>Agency FB</family>
+    <pointsize>14</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
    <string>QTGUI</string>
-  </property>$centralwidget$
+  </property>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>6</x>
+     <y>9</y>
+     <width>981</width>
+     <height>691</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Agency FB</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="tabPosition">
+    <enum>QTabWidget::West</enum>
+   </property>
+   <property name="tabShape">
+    <enum>QTabWidget::Triangular</enum>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+   <property name="tabsClosable">
+    <bool>false</bool>
+   </property>
+   <property name="movable">
+    <bool>true</bool>
+   </property>
+   <property name="tabBarAutoHide">
+    <bool>false</bool>
+   </property>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>对象识别配置</string>
+    </attribute>
+    <attribute name="toolTip">
+     <string>配置需要识别的对象类别及其置信度。</string>
+    </attribute>
+    <attribute name="whatsThis">
+     <string>配置需要识别的对象类别及其置信度。</string>
+    </attribute>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="geometry">
+      <rect>
+       <x>19</x>
+       <y>9</y>
+       <width>901</width>
+       <height>661</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="whatsThis">
+      <string>如果您想识别该类别，请勾选上。没有勾选的类别将被忽略，不会出现在识别结果中。</string>
+     </property>
+     <property name="title">
+      <string>可识别的类别</string>
+     </property>
+     <widget class="QTableView" name="tableView">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>40</y>
+        <width>861</width>
+        <height>561</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="toolTipDuration">
+       <number>1</number>
+      </property>
+     </widget>
+     <widget class="QSplitter" name="splitter">
+      <property name="geometry">
+       <rect>
+        <x>340</x>
+        <y>620</y>
+        <width>225</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>打开</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="text">
+        <string>保存</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_3">
+       <property name="text">
+        <string>重置</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>图像拼接配置</string>
+    </attribute>
+    <attribute name="toolTip">
+     <string>设置拼接图像的数量、布局、算法等参数。</string>
+    </attribute>
+    <attribute name="whatsThis">
+     <string>设置拼接图像的数量、布局、算法等参数。</string>
+    </attribute>
+   </widget>
+  </widget>
+  <action name="action_open">
+   <property name="text">
+    <string>打开</string>
+   </property>
+  </action>
  </widget>
- <layoutDefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
+ <layoutdefault spacing="6" margin="11"/>
  <resources>
-   <include location="QTGUI.qrc"/>
+  <include location="QTGUI.qrc"/>
  </resources>
- <connections/>
-</UI>
+ <connections>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QTGUIClass</receiver>
+   <slot>open_coconames()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>408</x>
+     <y>655</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>155</x>
+     <y>-12</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>QTGUIClass</receiver>
+   <slot>save_coconames()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>508</x>
+     <y>658</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1002</x>
+     <y>697</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>QTGUIClass</receiver>
+   <slot>reset_coconames()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>578</x>
+     <y>652</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>997</x>
+     <y>103</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>open_coconames()</slot>
+  <slot>save_coconames()</slot>
+  <slot>reset_coconames()</slot>
+ </slots>
+</ui>
