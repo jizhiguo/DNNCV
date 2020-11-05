@@ -14,7 +14,11 @@ public:
 private:
     Ui::QTGUIClass ui;
 
-    QStandardItemModel* model;
+    QStandardItemModel* model;//tableView的数据模型
+    QString coconamesfilename;//分类文件路径
+    void load_coconames(QString& filename);
+    void play();
+
 private slots:
     void coconames_open();
     void coconames_save();

@@ -47,7 +47,7 @@
     <enum>QTabWidget::Triangular</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <property name="iconSize">
     <size>
@@ -93,7 +93,7 @@
       <string>如果您想识别该类别，请勾选上。没有勾选的类别将被忽略，不会出现在识别结果中。</string>
      </property>
      <property name="title">
-      <string>可识别的类别</string>
+      <string>可识别的分类</string>
      </property>
      <widget class="QTableView" name="tableView">
       <property name="geometry">
@@ -153,10 +153,28 @@
     <attribute name="whatsThis">
      <string>设置拼接图像的数量、布局、算法等参数。</string>
     </attribute>
+    <widget class="QVideoWidget" name="videoWidget" native="true">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>90</y>
+       <width>311</width>
+       <height>211</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QVideoWidget</class>
+   <extends>QWidget</extends>
+   <header>QtMultimediaWidgets/qvideowidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="QTGUI.qrc"/>
  </resources>
