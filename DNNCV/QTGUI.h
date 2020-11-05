@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QDialog>
 #include "ui_QTGUI.h"
+#include <QStandardItemModel>
 
 class QTGUI : public QDialog
 {
@@ -12,4 +13,10 @@ public:
 
 private:
     Ui::QTGUIClass ui;
+
+    QStandardItemModel* model;
+private slots:
+    void coconames_open();
+    void coconames_save();
+    void coconames_reset();
 };

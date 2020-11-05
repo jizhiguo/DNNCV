@@ -155,11 +155,6 @@
     </attribute>
    </widget>
   </widget>
-  <action name="action_open">
-   <property name="text">
-    <string>打开</string>
-   </property>
-  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
@@ -167,34 +162,18 @@
  </resources>
  <connections>
   <connection>
-   <sender>pushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>QTGUIClass</receiver>
-   <slot>open_coconames()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>408</x>
-     <y>655</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>155</x>
-     <y>-12</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>pushButton_2</sender>
    <signal>clicked()</signal>
    <receiver>QTGUIClass</receiver>
    <slot>save_coconames()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>508</x>
-     <y>658</y>
+     <x>487</x>
+     <y>649</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1002</x>
-     <y>697</y>
+     <x>572</x>
+     <y>-9</y>
     </hint>
    </hints>
   </connection>
@@ -205,12 +184,28 @@
    <slot>reset_coconames()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>578</x>
-     <y>652</y>
+     <x>575</x>
+     <y>657</y>
     </hint>
     <hint type="destinationlabel">
-     <x>997</x>
-     <y>103</y>
+     <x>681</x>
+     <y>-10</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>QTGUIClass</receiver>
+   <slot>open_coconames()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>440</x>
+     <y>669</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>411</x>
+     <y>-22</y>
     </hint>
    </hints>
   </connection>
