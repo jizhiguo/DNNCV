@@ -15,12 +15,24 @@ private:
     Ui::QTGUIClass ui;
 
     QStandardItemModel* model;//tableView的数据模型
-    QString coconamesfilename;//分类文件路径
+    QString coconamesfilename;//分类配置文件路径
+    QString imgfilename;//图片文件路径
+    QString yoloCfgfilename;//yolo配置文件路径
+    QString yoloWeightsfilename;//yolo权重文件路径
+    QString cocofilename;//yolo分类文件路径
+
     void load_coconames(QString& filename);
-    void play();
+    void load_image(QString& filename);
+    void setupTable1();
+    void setupTable2();
 
 private slots:
-    void coconames_open();
-    void coconames_save();
-    void coconames_reset();
+    void onOpenCoco();
+    void onSaveCoco();
+    void onResetCoco();
+    void onLoadImage();
+    void onDetection();
+    void onAddPoint();
+    void onDelPoint();
 };
+

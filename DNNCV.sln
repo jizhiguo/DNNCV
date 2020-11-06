@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QTGUI", "DNNCV\DNNCV.vcxproj", "{5505AFBA-4576-4F74-80D9-FC7F07D0FF4A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObjDetector", "ObjDetector\ObjDetector.vcxproj", "{B79D169F-6029-46DF-AF88-F4554CE6FB92}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VideoSplicer", "VideoSplicer\VideoSplicer.vcxproj", "{B6F6C698-5008-40D3-B5E1-A574110CC02B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Detector", "Detector\Detector.vcxproj", "{948033F5-7106-4054-995E-9354ADD918DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,14 +23,6 @@ Global
 		{5505AFBA-4576-4F74-80D9-FC7F07D0FF4A}.Release|x64.ActiveCfg = Release|x64
 		{5505AFBA-4576-4F74-80D9-FC7F07D0FF4A}.Release|x64.Build.0 = Release|x64
 		{5505AFBA-4576-4F74-80D9-FC7F07D0FF4A}.Release|x86.ActiveCfg = Release|x64
-		{B79D169F-6029-46DF-AF88-F4554CE6FB92}.Debug|x64.ActiveCfg = Debug|x64
-		{B79D169F-6029-46DF-AF88-F4554CE6FB92}.Debug|x64.Build.0 = Debug|x64
-		{B79D169F-6029-46DF-AF88-F4554CE6FB92}.Debug|x86.ActiveCfg = Debug|Win32
-		{B79D169F-6029-46DF-AF88-F4554CE6FB92}.Debug|x86.Build.0 = Debug|Win32
-		{B79D169F-6029-46DF-AF88-F4554CE6FB92}.Release|x64.ActiveCfg = Release|x64
-		{B79D169F-6029-46DF-AF88-F4554CE6FB92}.Release|x64.Build.0 = Release|x64
-		{B79D169F-6029-46DF-AF88-F4554CE6FB92}.Release|x86.ActiveCfg = Release|Win32
-		{B79D169F-6029-46DF-AF88-F4554CE6FB92}.Release|x86.Build.0 = Release|Win32
 		{B6F6C698-5008-40D3-B5E1-A574110CC02B}.Debug|x64.ActiveCfg = Debug|x64
 		{B6F6C698-5008-40D3-B5E1-A574110CC02B}.Debug|x64.Build.0 = Debug|x64
 		{B6F6C698-5008-40D3-B5E1-A574110CC02B}.Debug|x86.ActiveCfg = Debug|Win32
@@ -39,6 +31,12 @@ Global
 		{B6F6C698-5008-40D3-B5E1-A574110CC02B}.Release|x64.Build.0 = Release|x64
 		{B6F6C698-5008-40D3-B5E1-A574110CC02B}.Release|x86.ActiveCfg = Release|Win32
 		{B6F6C698-5008-40D3-B5E1-A574110CC02B}.Release|x86.Build.0 = Release|Win32
+		{948033F5-7106-4054-995E-9354ADD918DA}.Debug|x64.ActiveCfg = Debug|x64
+		{948033F5-7106-4054-995E-9354ADD918DA}.Debug|x64.Build.0 = Debug|x64
+		{948033F5-7106-4054-995E-9354ADD918DA}.Debug|x86.ActiveCfg = Debug|x64
+		{948033F5-7106-4054-995E-9354ADD918DA}.Release|x64.ActiveCfg = Release|x64
+		{948033F5-7106-4054-995E-9354ADD918DA}.Release|x64.Build.0 = Release|x64
+		{948033F5-7106-4054-995E-9354ADD918DA}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

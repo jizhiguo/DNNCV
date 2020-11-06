@@ -8,6 +8,8 @@
 #include <QtMultimedia/qmediaplayer.h>
 #include <QtMultimedia/qmediaplaylist.h>
 #include <QVBoxLayout>
+#include "../Detector/Detector.h"
+
 
 QTGUI::QTGUI(QWidget *parent)
     : QDialog(parent)
@@ -15,6 +17,21 @@ QTGUI::QTGUI(QWidget *parent)
     
     ui.setupUi(this);
 
+    setupTable1();
+    setupTable2();
+
+    //connect button signals & slot functions
+    connect(ui.pushButton  , SIGNAL(clicked()), this, SLOT(onOpenCoco()));
+    connect(ui.pushButton_2, SIGNAL(clicked()), this, SLOT(onSaveCoco()));
+    connect(ui.pushButton_3, SIGNAL(clicked()), this, SLOT(onResetCoco()));
+    connect(ui.pushButton_4, SIGNAL(clicked()), this, SLOT(onLoadImage()));
+    connect(ui.pushButton_5, SIGNAL(clicked()), this, SLOT(onDetection()));
+    connect(ui.pushButton_6, SIGNAL(clicked()), this, SLOT(onAddPoint()));
+    connect(ui.pushButton_7, SIGNAL(clicked()), this, SLOT(onDelPoint()));
+}
+
+void QTGUI::setupTable1()
+{
     //tableview items delegates
     CheckBoxDelegate* cbd = new CheckBoxDelegate;
     ReadOnlyDelegate* rod = new ReadOnlyDelegate;
@@ -41,17 +58,52 @@ QTGUI::QTGUI(QWidget *parent)
 
     //load coconamems
     load_coconames(QCoreApplication::applicationDirPath().append("/coconames.txt"));
-
-    //connect button signals & slot functions
-    connect(ui.pushButton, SIGNAL(clicked()), this, SLOT(coconames_open()));
-    connect(ui.pushButton_2, SIGNAL(clicked()), this, SLOT(coconames_save()));
-    connect(ui.pushButton_3, SIGNAL(clicked()), this, SLOT(coconames_reset()));
-   
-    ui.videoWidget = new QVideoWidget;
-    play();
 }
 
-void QTGUI::coconames_open()
+void QTGUI::setupTable2()
+{
+    int rows=4;
+    int cols = 3;
+    //model setup
+    QStandardItemModel* model = new QStandardItemModel;
+    model->setRowCount(rows);
+    model->setColumnCount(cols);
+    SpinBoxDelegate* sbd = new SpinBoxDelegate;
+    ReadOnlyDelegate* rod = new ReadOnlyDelegate;
+    ui.tableView_2->setItemDelegate(sbd);
+    ui.tableView_2->setItemDelegateForColumn(0, rod);
+
+    //设置表头文字
+    QString header = u8"点\tx\ty";
+    QStringList headerList = header.split(QRegExp("\\t+"), QString::SkipEmptyParts);
+    model->setHorizontalHeaderLabels(headerList); 
+    //设置表格数据
+    QStandardItem* aItem;
+    for (int i = 0; i < model->rowCount(); i++)
+    {
+        for (int j = 0; j < model->columnCount(); j++)
+        {
+            if (0 == j)
+            {
+                aItem = new QStandardItem(QString("%1").arg(i));
+            }
+            else 
+            {
+                aItem = new QStandardItem(QString("%1").arg(i * 10 + j * 10));
+            }
+            model->setItem(i, j, aItem);
+        }
+    }
+
+    ui.tableView_2->setModel(model);
+    ui.tableView_2->verticalHeader()->setHidden(true);
+    ui.tableView_2->resizeColumnsToContents();
+    ui.tableView_2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+
+}
+
+void QTGUI::onOpenCoco()
 {
     QString curPath = QCoreApplication::applicationDirPath(); 
     QString filename = QFileDialog::getOpenFileName(this, u8"打开一个文件", curPath, u8"数据文件(*.txt);;所有文件(*.*)");
@@ -99,64 +151,22 @@ void QTGUI::load_coconames(QString& filename) {
         }
     }
     ui.tableView->resizeColumnsToContents();
-
-
-
 }
 
-void QTGUI::play()
+void QTGUI::load_image(QString& filename)
 {
-    QVideoWidget* videoWidget = ui.videoWidget;
-    QMediaPlayer* player = new QMediaPlayer;
-    QMediaPlaylist* playlist = new QMediaPlaylist;
-
-    videoWidget->setAspectRatioMode(Qt::IgnoreAspectRatio);
-    videoWidget->setFullScreen(true);
-
-
-    playlist->clear();
-    playlist->addMedia(QUrl::fromLocalFile("d:\\a.mp4"));
-    player->setPlaylist(playlist);
-
-    QFile file("d:\\a.mp4");
-    if (!file.open(QIODevice::ReadOnly))
-        qDebug() << "Could not open file";
-
-    player->setVideoOutput(videoWidget);
-    player->setPlaylist(playlist);
-
-    player->play();
-
-  //  QWidget* widget = new QWidget;
-  //  QVBoxLayout* layout = new QVBoxLayout;
-
-  //  QMediaPlayer* player = new QMediaPlayer;
-  //  QVideoWidget* videoWidget = new QVideoWidget;
-  //  QMediaPlaylist* playlist = new QMediaPlaylist;
-
-  //  videoWidget->setAspectRatioMode(Qt::IgnoreAspectRatio);
-  //  videoWidget->setFullScreen(true);
-
-  //  layout->addWidget(videoWidget);
-  //  widget->setLayout(layout);
-
-  //  playlist->clear();
-  //  playlist->addMedia(QUrl::fromLocalFile("d:\\a.mp4"));
-  //  player->setPlaylist(playlist);
-
-  ///*  QFile file("d:\\a.mp4");
-  //  if (!file.open(QIODevice::ReadOnly))
-  //      qDebug() << "Could not open file";*/
-
-  //  player->setVideoOutput(videoWidget);
-  //  player->setPlaylist(playlist);
-
-  //  widget->showFullScreen();
-  //  player->play();
-
+    QFile aFile(filename);
+    if (!(aFile.exists()))
+    {
+        ui.label->setText(u8"图片不存在");
+        return;
+    }
+    ui.label->setText(u8"");
+    ui.label->setPixmap(QPixmap(filename));
+    ui.label->setScaledContents(true);
 }
 
-void QTGUI::coconames_save()
+void QTGUI::onSaveCoco()
 {
     if (coconamesfilename.isEmpty())
     {
@@ -195,8 +205,50 @@ void QTGUI::coconames_save()
     }
 }
 
-void QTGUI::coconames_reset()
+void QTGUI::onResetCoco()
 {
     load_coconames(coconamesfilename);
 
 }
+
+void QTGUI::onLoadImage()
+{
+    QString curPath = QCoreApplication::applicationDirPath();
+    QString filename = QFileDialog::getOpenFileName(this, u8"打开一个图片文件", curPath, u8"jpg文件(*.jpg);;所有文件(*.*)");
+    if (filename.isEmpty())
+    {
+        return;
+    }
+    imgfilename = filename;
+    load_image(filename);
+}
+
+void QTGUI::onDetection()
+{
+    QImage img; 
+    img.load(imgfilename);
+    Detector d;
+    QString result = d.onDetection(&img);
+
+    ui.textBrowser->append(result);
+    ui.label->clear();
+    ui.label->setPixmap(QPixmap::fromImage(img));
+}
+
+void QTGUI::onAddPoint()
+{
+    QStandardItemModel* model = (QStandardItemModel*)(ui.tableView_2->model());
+    QList< QStandardItem*> items;
+    model->appendRow(items);
+
+    QStandardItem* aItem;
+    aItem = new QStandardItem(QString("%1").arg(model->rowCount()- 1));
+    model->setItem(model->rowCount() - 1, 0, aItem);
+}
+
+void QTGUI::onDelPoint()
+{
+    QStandardItemModel* model = (QStandardItemModel*)(ui.tableView_2->model());
+    model->removeRow(model->rowCount()-1);
+}
+
