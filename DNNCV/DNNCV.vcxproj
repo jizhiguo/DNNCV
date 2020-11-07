@@ -44,9 +44,23 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <IncludePath>D:\Server_Project\opencv440_x64\include\opencv2;D:\Server_Project\opencv440_x64\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>D:\Server_Project\opencv440_x64\x64\vc16\lib;$(VC_LibraryPath_x64);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <IncludePath>D:\Server_Project\opencv440_x64\include\opencv2;D:\Server_Project\opencv440_x64\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>D:\Server_Project\opencv440_x64\x64\vc16\lib;$(VC_LibraryPath_x64);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <AdditionalDependencies>opencv_world440.lib;$(Qt_LIBS_);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Link>
+      <AdditionalDependencies>opencv_world440.lib;$(Qt_LIBS_);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>msvc2017_64</QtInstall>
     <QtModules>core;gui;multimedia;multimediawidgets;widgets</QtModules>
@@ -91,6 +105,8 @@
     <QtUic Include="QTGUI.ui" />
     <QtMoc Include="QTGUI.h" />
     <ClCompile Include="CustomTableItem.cpp" />
+    <ClCompile Include="GraphicsView.cpp" />
+    <ClCompile Include="ImageWidget.cpp" />
     <ClCompile Include="QTGUI.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -98,8 +114,14 @@
     <QtMoc Include="CustomTableItem.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ImageWidget.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="GraphicsView.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Detector\Detector.vcxproj">
-      <Project>{948033f5-7106-4054-995e-9354add918da}</Project>
+      <Project>{9518d0d3-bca5-4888-86bf-82b625758c8d}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

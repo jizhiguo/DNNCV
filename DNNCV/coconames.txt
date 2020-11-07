@@ -1,4 +1,4 @@
-是否识别		类别ID		英文名称		置信度		
+是否识别		类别ID		名称		置信度		
 TRUE		0		person		50%		
 TRUE		1		bicycle		50%		
 TRUE		2		car		90%		

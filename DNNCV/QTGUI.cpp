@@ -8,26 +8,26 @@
 #include <QtMultimedia/qmediaplayer.h>
 #include <QtMultimedia/qmediaplaylist.h>
 #include <QVBoxLayout>
+#include "imagewidget.h"
+#include "GraphicsView.h"
 #include "../Detector/Detector.h"
 
 
 QTGUI::QTGUI(QWidget *parent)
     : QDialog(parent)
 {
-    
     ui.setupUi(this);
-
     setupTable1();
     setupTable2();
-
     //connect button signals & slot functions
     connect(ui.pushButton  , SIGNAL(clicked()), this, SLOT(onOpenCoco()));
     connect(ui.pushButton_2, SIGNAL(clicked()), this, SLOT(onSaveCoco()));
     connect(ui.pushButton_3, SIGNAL(clicked()), this, SLOT(onResetCoco()));
     connect(ui.pushButton_4, SIGNAL(clicked()), this, SLOT(onLoadImage()));
-    connect(ui.pushButton_5, SIGNAL(clicked()), this, SLOT(onDetection()));
+    connect(ui.pushButton_5, SIGNAL(clicked()), this, SLOT(doDetection()));
     connect(ui.pushButton_6, SIGNAL(clicked()), this, SLOT(onAddPoint()));
     connect(ui.pushButton_7, SIGNAL(clicked()), this, SLOT(onDelPoint()));
+    connect(ui.graphicsView, SIGNAL(sigDrawPolygon()), this, SLOT(onSigDrawPolygon()));
 }
 
 void QTGUI::setupTable1()
@@ -99,8 +99,6 @@ void QTGUI::setupTable2()
     ui.tableView_2->verticalHeader()->setHidden(true);
     ui.tableView_2->resizeColumnsToContents();
     ui.tableView_2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
-
 }
 
 void QTGUI::onOpenCoco()
@@ -112,8 +110,8 @@ void QTGUI::onOpenCoco()
         return; 
     }
     load_coconames(filename);
-    coconamesfilename = filename;
 }
+
 
 void QTGUI::load_coconames(QString& filename) {
 
@@ -121,6 +119,7 @@ void QTGUI::load_coconames(QString& filename) {
     QFile file(filename);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
+        coconamesfilename = filename;
         QTextStream textStream(&file);
         while (!textStream.atEnd())
         {
@@ -158,12 +157,29 @@ void QTGUI::load_image(QString& filename)
     QFile aFile(filename);
     if (!(aFile.exists()))
     {
-        ui.label->setText(u8"图片不存在");
         return;
     }
-    ui.label->setText(u8"");
-    ui.label->setPixmap(QPixmap(filename));
-    ui.label->setScaledContents(true);
+    QImage image;
+    image.load(filename);
+    load_image(image);
+}
+
+void QTGUI::load_image(QImage image)
+{
+    if (!scene)
+        scene = new QGraphicsScene;
+    scene->clear();
+    ui.graphicsView->m_MousePressPos.clear();
+    QPixmap qPixmap = QPixmap::fromImage(image);
+    ImageWidget* imageWidget;
+    imageWidget = new ImageWidget(&qPixmap);//实例化类ImageWidget的对象m_Image，该类继承自QGraphicsItem
+    int nwith = ui.graphicsView->width();//获取界面控件Graphics View的宽度
+    int nheight = ui.graphicsView->height();//获取界面控件Graphics View的高度
+    imageWidget->setQGraphicsViewWH(nwith, nheight);//将界面控件Graphics View的width和height传进类m_Image中
+    scene->addItem(imageWidget);//将QGraphicsItem类对象放进QGraphicsScene中
+    ui.graphicsView->setSceneRect(QRectF(-(nwith / 2), -(nheight / 2), nwith, nheight));//使视窗的大小固定在原始大小，不会随图片的放大而放大（默认状态下图片放大的时候视窗两边会自动出现滚动条，并且视窗内的视野会变大），防止图片放大后重新缩小的时候视窗太大而不方便观察图片
+    ui.graphicsView->setScene(scene);
+    ui.graphicsView->setFocus();//将界面的焦点设置到当前Graphics View控件
 }
 
 void QTGUI::onSaveCoco()
@@ -223,18 +239,6 @@ void QTGUI::onLoadImage()
     load_image(filename);
 }
 
-void QTGUI::onDetection()
-{
-    QImage img; 
-    img.load(imgfilename);
-    Detector d;
-    QString result = d.onDetection(&img);
-
-    ui.textBrowser->append(result);
-    ui.label->clear();
-    ui.label->setPixmap(QPixmap::fromImage(img));
-}
-
 void QTGUI::onAddPoint()
 {
     QStandardItemModel* model = (QStandardItemModel*)(ui.tableView_2->model());
@@ -252,3 +256,96 @@ void QTGUI::onDelPoint()
     model->removeRow(model->rowCount()-1);
 }
 
+void QTGUI::onSigDrawPolygon()
+{
+    //clear polygon in scene
+    QList<QGraphicsItem*> itemList = scene->items();
+    for (auto i = 0; i < itemList.size(); i++) {
+        if ((itemList[i]->type()== QGraphicsPolygonItem::Type)) {//多边形类型的图元
+            scene->removeItem(itemList[i]);
+            delete itemList[i];
+        }
+    }
+
+    //add a brand new polygon to scene
+    polygon = scene->addPolygon(ui.graphicsView->m_MousePressPos, QPen(QColor(255, 0, 0, 100)), QBrush(QColor(0, 0, 255, 50)));
+
+    //update table of points' coordinate.
+    QStandardItemModel* model = (QStandardItemModel*)(ui.tableView_2->model());
+    while (model->rowCount() > 0)model->removeRow(0);
+    QVectorIterator<QPointF> iterator(polygon->mapFromScene(polygon->polygon()));
+    QPointF f; int i = 0;
+    QStandardItem* aItem;
+    QList< QStandardItem*> items;
+    while (iterator.hasNext())
+    {
+        f = ui.graphicsView->mapFromScene(iterator.next());//场景坐标转视图坐标
+        model->appendRow(items);
+        aItem = new QStandardItem(QString("%1").arg(i));
+        model->setItem(i, 0, aItem);
+        aItem = new QStandardItem(QString("%1").arg(f.x()));
+        model->setItem(i, 1, aItem);
+        aItem = new QStandardItem(QString("%1").arg(f.y()));
+        model->setItem(i, 2, aItem);
+        i++;
+    }
+}
+
+void QTGUI::doDetection()
+{
+    yoloCfgfilename = "D:\\Server_Project\\model\\yolov4.cfg";
+    yoloWeightsfilename = "D:\\Server_Project\\model\\yolov4.weights";
+    yoloCocofilename = "D:\\Server_Project\\model\\coco.names";
+    cv::Mat img;
+    img = cv::imread(imgfilename.toStdString());
+    if (img.data == NULL)
+    {
+        ui.textBrowser->append(u8"请选择图片.");
+        return;
+    }
+
+    std::vector<cv::Rect> out_Boxes;
+    std::vector<int> out_ClassIds;
+    std::vector<float> out_Confidences;
+    std::vector<cv::String> out_ClassNames;
+    double confidence = 0.2;
+    Detector detector(yoloCfgfilename, yoloWeightsfilename, yoloCocofilename);
+    QString result = detector.doDetection(img, confidence, out_Boxes, out_ClassIds, out_Confidences, out_ClassNames);
+    ui.textBrowser->append(result);
+    if (!(out_Boxes.size() > 0))
+    {
+        ui.textBrowser->append(QString(u8"未侦测到任何对象.(confidence=%1)").arg(confidence));
+        return;
+    }
+    
+    size_t len = out_Boxes.size();
+    cv::Rect cr;
+    for (size_t i = 0; i < len; i++) {
+        //id,name,conf,in poly,in checklist
+        cr = out_Boxes[i];
+        ui.textBrowser->append(QString(u8"id:%1").arg(out_ClassIds[i]));
+        ui.textBrowser->append(QString(u8"名称:%1").arg(out_ClassNames[i].c_str()));
+        ui.textBrowser->append(QString(u8"可能性:%1f").arg(out_Confidences[i]));
+        ui.textBrowser->append(QString(u8"是否在多边形1内:%1").arg(inPoly(out_Boxes[i]) ? u8"是" : u8"否"));
+        ui.textBrowser->append(QString(u8"是否识别:%1").arg(inChecklist(out_ClassIds[i]) ? u8"是" : u8"否"));
+    }
+}
+
+bool  QTGUI::inPoly(cv::Rect box)
+{
+    if (polygon != NULL)
+    {
+        return  polygon->polygon().containsPoint(QPointF(box.x, box.y), Qt::WindingFill);
+    }
+    return false;
+}
+
+bool  QTGUI::inChecklist(int classID)
+{
+    int rows = ui.tableView->model()->rowCount();
+    for (size_t i = 0; i < rows; i++)
+    {
+        if (model->item(i, 1)->text().toInt() == classID) return model->item(i, 0)->text().toInt();
+    }
+    return false;
+}
