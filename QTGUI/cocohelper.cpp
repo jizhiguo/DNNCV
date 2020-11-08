@@ -283,7 +283,7 @@ cv::Mat Coconames::Base2Mat(std::string& base64_data)
 	std::string s_mat;
 	s_mat = base64Decode(base64_data.data(), base64_data.size());
 	std::vector<char> base64_img(s_mat.begin(), s_mat.end());
-	img = cv::imdecode(base64_img, 0);
+	img = cv::imdecode(base64_img, 1);
 	//img = cv::imdecode(base64_img, CV_LOAD_IMAGE_COLOR);
 	return img;
 }
