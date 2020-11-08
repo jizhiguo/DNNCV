@@ -41,17 +41,18 @@ void QTGUI::setupTable1()
     combo->setItems(itemList);
 
     //column 0,checkbox
-    //column 1,2,read only
-    //column 3,combobox
+    //column 1,2,3read only
+    //column 4,combobox
     cbd->setColumn(0);
     ui.tableView->setItemDelegateForColumn(1, rod);
     ui.tableView->setItemDelegateForColumn(2, rod);
-    ui.tableView->setItemDelegateForColumn(3, combo);
+    ui.tableView->setItemDelegateForColumn(3, rod);
+    ui.tableView->setItemDelegateForColumn(4, combo);
 
     //model setup
     model = new QStandardItemModel;
     model->setRowCount(10);
-    model->setColumnCount(4);
+    model->setColumnCount(5);
     ui.tableView->setModel(model);
     ui.tableView->setItemDelegate(cbd);
     ui.tableView->verticalHeader()->setHidden(true);
@@ -117,6 +118,7 @@ void QTGUI::load_coconames(QString& filename) {
 
     QStringList fileContent;
     QFile file(filename);
+    if (!file.exists()) return;
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         coconamesfilename = filename;
@@ -142,7 +144,7 @@ void QTGUI::load_coconames(QString& filename) {
         {
             QString aLineText = fileContent.at(i);
             QStringList tmpList = aLineText.split(QRegExp("\\t+"), QString::SkipEmptyParts);
-            for (int j = 0; j < 4; j++)
+            for (int j = 0; j < 5; j++)
             {
                 aItem = new QStandardItem(tmpList.at(j));
                 model->setItem(i - 1, j, aItem);
@@ -337,6 +339,7 @@ bool  QTGUI::inPoly(cv::Rect box)
     {
         return  polygon->polygon().containsPoint(QPointF(box.x, box.y), Qt::WindingFill);
     }
+
     return false;
 }
 

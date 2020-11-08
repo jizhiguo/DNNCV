@@ -62,13 +62,14 @@ QString Detector::doDetection(cv::Mat img, double conf,
     cv::String className;
     cv::Size labelSize;
     std::vector<std::string> obj_names = objects_names_from_file(yoloCoconames.toStdString());
+    std::cout << obj_names[0];
     for (size_t i = 0; i < indices.size(); ++i) {
         idx = indices[i];
         className = obj_names[classIds[idx]];
         labelSize = cv::getTextSize(className, cv::HersheyFonts::FONT_HERSHEY_SIMPLEX, 0.5, 1, 0);
         box = boxes[idx];
         out_Boxes.push_back(box);
-        out_ClassIds.push_back(idx);
+        out_ClassIds.push_back(classIds[idx]);
         out_Confidences.push_back(confidences[idx]);
         out_ClassNames.push_back(className);
 
@@ -82,7 +83,7 @@ QString Detector::doDetection(cv::Mat img, double conf,
         putText(currentFrame, className.c_str(), cv::Point(box.x, box.y - 2), cv::HersheyFonts::FONT_HERSHEY_SIMPLEX, 0.5, textColor, 1, 8);
     }
     img = currentFrame;
-    cv::imshow("¡¾result¡¿", currentFrame);
+    //cv::imshow("¡¾result¡¿", currentFrame);
     return QString(u8"detection time elapsed:  %1 ms").arg((cvGetTickCount() - t1) / cvGetTickFrequency()/1000);
 }
 

@@ -15,7 +15,7 @@ public:
 private:
     Ui::QTGUIClass ui;
 
-    QStandardItemModel* model;//tableView的数据模型
+    QStandardItemModel* model = NULL;//tableView的数据模型
     QString coconamesfilename;//分类配置文件路径
     QString imgfilename;//图片文件路径
 
