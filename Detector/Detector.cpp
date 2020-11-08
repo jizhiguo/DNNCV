@@ -9,13 +9,13 @@ Detector::Detector(QString sCfgFile, QString sWeightFile, QString sCoconamesFile
 }
 
 //∂‘œÛºÏ≤‚
-QString Detector::doDetection(cv::Mat img, double conf,
+QString Detector::doDetection(cv::Mat& img, double conf,
     std::vector<cv::Rect>& out_Boxes,
     std::vector<int>& out_ClassIds,
     std::vector<float>& out_Confidences,
     std::vector<cv::String>& out_ClassNames)
 {
-    int64 t1=cvGetTickCount(); 
+    int64 t1 = cvGetTickCount();
     cv::Mat currentFrame = img;
     cv::Mat inputBlob = cv::dnn::blobFromImage(currentFrame, 1.0 / 255, cv::Size(608, 608), cv::Scalar());
     net.setInput(inputBlob);
@@ -82,7 +82,6 @@ QString Detector::doDetection(cv::Mat img, double conf,
         rectangle(currentFrame, textBox, rectColor, -1, 8, 0);
         putText(currentFrame, className.c_str(), cv::Point(box.x, box.y - 2), cv::HersheyFonts::FONT_HERSHEY_SIMPLEX, 0.5, textColor, 1, 8);
     }
-    img = currentFrame;
     //cv::imshow("°æresult°ø", currentFrame);
     return QString(u8"detection time elapsed:  %1 ms").arg((cvGetTickCount() - t1) / cvGetTickFrequency()/1000);
 }

@@ -11,7 +11,7 @@
 class DETECTOR_EXPORT Detector
 {
 public:
-    QString doDetection(cv::Mat img, double conf,
+    QString doDetection(cv::Mat& img, double conf,
         std::vector<cv::Rect>& out_Boxes,
         std::vector<int>& out_ClassIds,
         std::vector<float>& out_Confidences,

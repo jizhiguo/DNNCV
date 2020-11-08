@@ -50,6 +50,9 @@
     <ClCompile Include="GraphicsView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cocohelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="CustomTableItem.h">
