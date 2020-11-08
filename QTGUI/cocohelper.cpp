@@ -1,92 +1,4 @@
-#include <QtCore>
-#include <qpolygon.h>
-#include <opencv2\core\types.hpp>
-#include <opencv2\imgcodecs.hpp>
-
-/// <summary>
-/// 分类配置
-/// </summary>
-class Coconames {
-public:
-	Coconames();
-	int classid;///CLASSID
-	bool checked;///是否识别
-	QString className;///英文名
-	QString className1;///中文名
-	float confidence;///置信度阈值
-public:
-	QHash<int, Coconames> coconames;
-
-	/// <summary>
-	/// 2\输入：80类可选配置文件读入；{{id,bool},{bool,id},{bool,id,classname}...}
-	/// 备注：对话框配置来配置上述配置文件。目的是提供配置界面来配置这边的读入配置文件。
-	/// 
-	/// 
-	/// 配置文件采用ascii编码格式的文本文件。
-	/// 配置文件格式：
-	/// 是否识别    类别ID      英文名称		中文名称	置信度		
-	/// 1		    0		    person  		人		    0.5
-	/// 0		    1		    bicycle	    	自行车		0.7
-	/// 1		    2		    car		        小汽车		0.9
-	/// 0		    3		    motor  bike		摩托车		0.5
-	/// ...
-	/// </summary>
-	/// <param name="cocoFilename">QString 配置文件路径。</param>
-	/// <returns>
-	/// QHash 容器[classid,Cococname]
-	/// </returns>
-	QHash<int, Coconames> loadCoconames(const QString cocoFilename);
-
-	bool inCoconames(int classid);
-
-	QString formatedOutput(
-		cv::Mat& currentFrame,
-		std::vector<cv::Rect>& out_Boxes,
-		std::vector<int>& out_ClassIds,
-		std::vector<float>& out_Confidences,
-		std::vector<cv::String>& out_ClassNames);
-};
-
-struct Vertex
-{
-	int devid;
-	int polyid;
-	int vertexid;
-	int x;
-	int y;
-
-};
-class DevPolygons {
-public:
-	DevPolygons();
-public:
-	int deviceid;
-	int polyonid;
-	int vertexid;
-	int x;
-	int y;
-
-public:
-	QHash<QString, QPolygonF> polygons;
-
-	/// <summary>
-	/// 3\输入：各个雷达的多变行QLIST向量组合；{{CAMERAID,[PONT1,PONT2,PONT3,PON4]},{CAMERAID,[PONT1,PONT2,PONT3,PON4]}，。。。16个}
-	/// 备注：
-	/// 
-	/// 配置文件采用ascii编码格式的文本文件。
-	/// 配置文件格式：
-	/// 所属设备ID  PolygonID   顶点序号    X坐标     Y坐标
-	/// 1		    0		    1           100       100
-	/// 1		    0		    2           100       100
-	/// 2		    2		    1           100       100
-	/// 3		    3		    1           100       100
-	/// </summary>
-	/// <param name="polygonFilename">QString 配置文件路径。</param>
-	/// <returns>///[设备id.polyid,QPolygonF]</returns>
-	QHash<QString, QPolygonF> loadPolygons(const QString polygonFilename);
-
-	bool inPolygons(int x, int y);
-};
+#include "CocoHelper.h"
 
 Coconames::Coconames()
 {
@@ -145,9 +57,8 @@ QString Coconames::formatedOutput(
 	QString result;
 
 	//base64 encode
-	std::vector<uchar> data_encode;
-	cv::imencode(".png", currentFrame, data_encode);
-	std::string str_encode(data_encode.begin(), data_encode.end());
+	Coconames c;
+
 
 	//count on classes
 	QHash<int, int> counter;
@@ -189,7 +100,9 @@ QString Coconames::formatedOutput(
 			.arg(str);
 	}
 
-	result = QString(u8"图片的BASE64：%1，防区内的识别目标信息：%2").arg(str_encode.c_str()).arg(str);
+	result = QString(u8"图片的BASE64：%1，防区内的识别目标信息：%2")
+		.arg(c.Mat2Base64(currentFrame, "jpg").c_str())
+		.arg(str);
 	return result;
 }
 
@@ -255,4 +168,122 @@ bool DevPolygons::inPolygons(int x, int y)
 		if (i.next().containsPoint(QPointF(x, y), Qt::WindingFill)) return true;
 	}
 	return false;
+}
+
+std::string Coconames::base64Decode(const char* Data, int DataByte)
+{
+	//解码表
+	const char DecodeTable[] =
+	{
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		62, // '+'
+		0, 0, 0,
+		63, // '/'
+		52, 53, 54, 55, 56, 57, 58, 59, 60, 61, // '0'-'9'
+		0, 0, 0, 0, 0, 0, 0,
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, // 'A'-'Z'
+		0, 0, 0, 0, 0, 0,
+		26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
+		39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, // 'a'-'z'
+	};
+	//返回值
+	std::string strDecode;
+	int nValue;
+	int i = 0;
+	while (i < DataByte)
+	{
+		if (*Data != '\r' && *Data != '\n')
+		{
+			nValue = DecodeTable[*Data++] << 18;
+			nValue += DecodeTable[*Data++] << 12;
+			strDecode += (nValue & 0x00FF0000) >> 16;
+			if (*Data != '=')
+			{
+				nValue += DecodeTable[*Data++] << 6;
+				strDecode += (nValue & 0x0000FF00) >> 8;
+				if (*Data != '=')
+				{
+					nValue += DecodeTable[*Data++];
+					strDecode += nValue & 0x000000FF;
+				}
+			}
+			i += 4;
+		}
+		else// 回车换行,跳过
+		{
+			Data++;
+			i++;
+		}
+	}
+	return strDecode;
+}
+
+std::string Coconames::base64Encode(const unsigned char* Data, int DataByte)
+{
+	//编码表
+	const char EncodeTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	//返回值
+	std::string strEncode;
+	unsigned char Tmp[4] = { 0 };
+	int LineLength = 0;
+	for (int i = 0; i < (int)(DataByte / 3); i++)
+	{
+		Tmp[1] = *Data++;
+		Tmp[2] = *Data++;
+		Tmp[3] = *Data++;
+		strEncode += EncodeTable[Tmp[1] >> 2];
+		strEncode += EncodeTable[((Tmp[1] << 4) | (Tmp[2] >> 4)) & 0x3F];
+		strEncode += EncodeTable[((Tmp[2] << 2) | (Tmp[3] >> 6)) & 0x3F];
+		strEncode += EncodeTable[Tmp[3] & 0x3F];
+		if (LineLength += 4, LineLength == 76) { strEncode += "\r\n"; LineLength = 0; }
+	}
+	//对剩余数据进行编码
+	int Mod = DataByte % 3;
+	if (Mod == 1)
+	{
+		Tmp[1] = *Data++;
+		strEncode += EncodeTable[(Tmp[1] & 0xFC) >> 2];
+		strEncode += EncodeTable[((Tmp[1] & 0x03) << 4)];
+		strEncode += "==";
+	}
+	else if (Mod == 2)
+	{
+		Tmp[1] = *Data++;
+		Tmp[2] = *Data++;
+		strEncode += EncodeTable[(Tmp[1] & 0xFC) >> 2];
+		strEncode += EncodeTable[((Tmp[1] & 0x03) << 4) | ((Tmp[2] & 0xF0) >> 4)];
+		strEncode += EncodeTable[((Tmp[2] & 0x0F) << 2)];
+		strEncode += "=";
+	}
+
+
+	return strEncode;
+}
+
+std::string Coconames::Mat2Base64(const cv::Mat& img, std::string imgType)
+{
+	//Mat转base64
+	std::string img_data;
+	std::vector<uchar> vecImg;
+	std::vector<int> vecCompression_params;
+	vecCompression_params.push_back(9);
+	//vecCompression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+	vecCompression_params.push_back(90);
+	imgType = "." + imgType;
+	cv::imencode(imgType, img, vecImg, vecCompression_params);
+	img_data = base64Encode(vecImg.data(), vecImg.size());
+	return img_data;
+}
+
+cv::Mat Coconames::Base2Mat(std::string& base64_data)
+{
+	cv::Mat img;
+	std::string s_mat;
+	s_mat = base64Decode(base64_data.data(), base64_data.size());
+	std::vector<char> base64_img(s_mat.begin(), s_mat.end());
+	img = cv::imdecode(base64_img, 0);
+	//img = cv::imdecode(base64_img, CV_LOAD_IMAGE_COLOR);
+	return img;
 }

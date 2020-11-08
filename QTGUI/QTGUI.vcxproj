@@ -101,7 +101,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="cocohelper.cpp" />
+    <ClCompile Include="CocoHelper.cpp" />
     <QtRcc Include="QTGUI.qrc" />
     <QtUic Include="QTGUI.ui" />
     <QtMoc Include="QTGUI.h" />
@@ -115,6 +115,7 @@
     <QtMoc Include="CustomTableItem.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CocoHelper.h" />
     <ClInclude Include="ImageWidget.h" />
   </ItemGroup>
   <ItemGroup>

@@ -11,7 +11,7 @@
 #include "imagewidget.h"
 #include "GraphicsView.h"
 #include "../Detector/Detector.h"
-
+#include "CocoHelper.h"
 
 QTGUI::QTGUI(QWidget* parent)
 	: QDialog(parent)
@@ -213,7 +213,7 @@ void QTGUI::onSaveCoco()
 	for (int i = 0; i < model->rowCount(); i++)
 	{
 		str = "";
-		for (int j = 0; j < model->rowCount(); j++)
+		for (int j = 0; j < model->columnCount(); j++)
 		{
 			aItem = model->item(i, j);
 			str = str + aItem->text() + QString::asprintf("\t\t");
@@ -318,9 +318,12 @@ void QTGUI::doDetection()
 		ui.textBrowser->append(QString(u8"未侦测到任何对象.(confidence=%1)").arg(confidence));
 		return;
 	}
-	cv::namedWindow("camera", CV_WINDOW_NORMAL);
-	cv::imshow("camera", img);
-	
+	//cv::namedWindow("camera", CV_WINDOW_NORMAL);
+	//cv::imshow("camera", img);
+	Coconames c;
+	cv::Mat im = c.Base2Mat(c.Mat2Base64(img, "jpg"));
+	cv::imshow("camera", im);
+
 	size_t len = out_Boxes.size();
 	cv::Rect cr;
 	for (size_t i = 0; i < len; i++) {

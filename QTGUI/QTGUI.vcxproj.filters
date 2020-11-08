@@ -50,7 +50,7 @@
     <ClCompile Include="GraphicsView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cocohelper.cpp">
+    <ClCompile Include="CocoHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -64,6 +64,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImageWidget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CocoHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
