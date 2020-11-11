@@ -5,6 +5,7 @@
 #include <QStandardItemModel>
 #include<opencv2\opencv.hpp>
 #include<opencv2\highgui\highgui_c.h>
+#include "ImageWidget.h"
 
 class QTGUI : public QDialog
 {
@@ -26,6 +27,7 @@ private:
 
 	QGraphicsScene* scene = new QGraphicsScene;
 	QGraphicsPolygonItem* polygon = NULL;
+	ImageWidget* imageWidget = NULL;
 	bool inPoly(cv::Rect box);
 	bool inChecklist(int classID);
 
@@ -44,4 +46,5 @@ private slots:
 	void onAddPoint();
 	void onDelPoint();
 	void onSigDrawPolygon();
+	void on_pushButton_8_clicked();
 };

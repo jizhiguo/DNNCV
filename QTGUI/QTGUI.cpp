@@ -8,10 +8,10 @@
 #include <QtMultimedia/qmediaplayer.h>
 #include <QtMultimedia/qmediaplaylist.h>
 #include <QVBoxLayout>
-#include "imagewidget.h"
 #include "GraphicsView.h"
 #include "../Detector/Detector.h"
 #include "CocoHelper.h"
+using namespace cv;
 
 QTGUI::QTGUI(QWidget* parent)
 	: QDialog(parent)
@@ -172,7 +172,6 @@ void QTGUI::load_image(QImage image)
 	scene->clear();
 	ui.graphicsView->m_MousePressPos.clear();
 	QPixmap qPixmap = QPixmap::fromImage(image);
-	ImageWidget* imageWidget;
 	imageWidget = new ImageWidget(&qPixmap);//实例化类ImageWidget的对象m_Image，该类继承自QGraphicsItem
 	int nwith = ui.graphicsView->width();//获取界面控件Graphics View的宽度
 	int nheight = ui.graphicsView->height();//获取界面控件Graphics View的高度
@@ -297,6 +296,9 @@ void QTGUI::doDetection()
 	yoloCfgfilename = "D:\\Server_Project\\model\\yolov4.cfg";
 	yoloWeightsfilename = "D:\\Server_Project\\model\\yolov4.weights";
 	yoloCocofilename = "D:\\Server_Project\\model\\coco.names";
+	yoloCfgfilename = "D:\\yolov4\\darknet\\cfg\\yolov4.cfg";
+	yoloWeightsfilename = "D:\\yolov4\\darknet\\build\\darknet\\x64\\yolov4.weights";
+	yoloCocofilename = "D:\\yolov4\\darknet\\cfg\\coco.names";
 	cv::Mat img;
 	img = cv::imread(imgfilename.toStdString());
 	if (img.data == NULL)
@@ -323,13 +325,12 @@ void QTGUI::doDetection()
 	Coconames c;
 	cv::Mat im = c.Base2Mat(c.Mat2Base64(img, "jpg"));
 	cv::imshow("camera", im);
-
 	size_t len = out_Boxes.size();
 	cv::Rect cr;
 	for (size_t i = 0; i < len; i++) {
 		//id,name,conf,in poly,in checklist
 		cr = out_Boxes[i];
-		ui.textBrowser->append(QString(u8"id:%1").arg(out_ClassIds[i]));
+		ui.textBrowser->append(QString(u8"id:%1(x=%2,y=%3)").arg(out_ClassIds[i]).arg(cr.x).arg(cr.y));
 		ui.textBrowser->append(QString(u8"名称:%1").arg(out_ClassNames[i].c_str()));
 		ui.textBrowser->append(QString(u8"可能性:%1f").arg(out_Confidences[i]));
 		ui.textBrowser->append(QString(u8"是否在多边形1内:%1").arg(inPoly(out_Boxes[i]) ? u8"是" : u8"否"));
@@ -341,7 +342,9 @@ bool  QTGUI::inPoly(cv::Rect box)
 {
 	if (polygon != NULL)
 	{
-		return  polygon->polygon().containsPoint(QPointF(box.x, box.y), Qt::WindingFill);
+		QPolygonF qp = polygon->scene()->views()[0]->mapFromScene(polygon->polygon().toPolygon());
+		QPolygonF qp1 = imageWidget->mapToItem(polygon, polygon->polygon());
+		return qp.containsPoint(QPoint(box.x, box.y), Qt::WindingFill);
 	}
 
 	return false;
@@ -355,4 +358,81 @@ bool  QTGUI::inChecklist(int classID)
 		if (model->item(i, 1)->text().toInt() == classID) return model->item(i, 0)->text().toInt();
 	}
 	return false;
+}
+
+
+
+bool use_mask;
+Mat img; Mat templ; Mat mask; Mat result;
+const char* image_window = "Source Image";
+const char* result_window = "Result window";
+int match_method;
+int max_Trackbar = 5;
+void on_matching(int, void*);
+
+void QTGUI::on_pushButton_8_clicked()
+{
+	QMessageBox::information(this, "adf", "asdf");
+
+	img = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person.jpg");
+	if (!img.data)
+	{
+		std::cout << "原始图读取失败" << endl;
+		return;
+	}
+	templ = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person2.jpg");
+	if (!templ.data)
+	{
+		std::cout << "模板图读取失败" << endl;
+		return;
+	}
+
+	imshow("g_srcImage", img);
+	imshow("g_tempalteImage", templ);
+
+	cv::namedWindow("原始图", CV_WINDOW_AUTOSIZE);
+	cv::namedWindow("效果图", CV_WINDOW_AUTOSIZE);
+	//cv::createTrackbar("方法", "原始图", &match_method, max_Trackbar, on_matching);
+
+	on_matching(0, NULL);
+
+
+
+	return;
+}
+
+
+void on_matching(int, void*)
+{
+	Mat img_display;
+	img.copyTo(img_display);
+	int result_cols = img.cols - templ.cols + 1;
+	int result_rows = img.rows - templ.rows + 1;
+	result.create(result_rows, result_cols, CV_32FC1);
+	bool method_accepts_mask = (TM_SQDIFF == match_method || match_method == TM_CCORR_NORMED);
+	if (use_mask && method_accepts_mask)
+	{
+		matchTemplate(img, templ, result, match_method, mask);
+	}
+	else
+	{
+		matchTemplate(img, templ, result, match_method);
+	}
+	normalize(result, result, 0, 1, NORM_MINMAX, -1, Mat());
+	double minVal; double maxVal; Point minLoc; Point maxLoc;
+	Point matchLoc;
+	minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc, Mat());
+	if (match_method == TM_SQDIFF || match_method == TM_SQDIFF_NORMED)
+	{
+		matchLoc = minLoc;
+	}
+	else
+	{
+		matchLoc = maxLoc;
+	}
+	rectangle(img_display, matchLoc, Point(matchLoc.x + templ.cols, matchLoc.y + templ.rows), Scalar::all(0), 2, 8, 0);
+	rectangle(result, matchLoc, Point(matchLoc.x + templ.cols, matchLoc.y + templ.rows), Scalar::all(0), 2, 8, 0);
+	imshow(image_window, img_display);
+	imshow(result_window, result);
+	return;
 }

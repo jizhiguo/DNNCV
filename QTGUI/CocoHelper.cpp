@@ -101,7 +101,7 @@ QString Coconames::formatedOutput(
 	}
 
 	result = QString(u8"图片的BASE64：%1，防区内的识别目标信息：%2")
-		.arg(c.Mat2Base64(currentFrame, "jpg").c_str())
+		.arg(c.Mat2Base64(currentFrame, "png").c_str())
 		.arg(str);
 	return result;
 }

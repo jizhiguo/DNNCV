@@ -11,20 +11,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5505AFBA-4576-4F74-80D9-FC7F07D0FF4A}</ProjectGuid>
+    <ProjectGuid>{695E0DA7-5A8B-47F7-AD29-10742315D12F}</ProjectGuid>
     <Keyword>QtVS_v303</Keyword>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">10.0.18362.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">10.0.18362.0</WindowsTargetPlatformVersion>
     <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
-    <ProjectName>QTGUI</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -44,31 +43,24 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <IncludePath>d:\opencv440\build\install\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>D:\opencv440\build\install\x64\vc16\lib;$(VC_LibraryPath_x64);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IncludePath>D:\opencv440\build\install\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>D:\opencv440\build\install\x64\vc16\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <IncludePath>d:\opencv440\build\install\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>D:\opencv440\build\install\x64\vc16\lib;$(VC_LibraryPath_x64);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
       <AdditionalDependencies>opencv_world440d.lib;$(Qt_LIBS_);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Link>
-      <AdditionalDependencies>opencv_world440.lib;$(Qt_LIBS_);%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>msvc2017_64</QtInstall>
-    <QtModules>core;gui;multimedia;multimediawidgets;widgets</QtModules>
+    <QtModules>core</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>msvc2017_64</QtInstall>
-    <QtModules>core;gui;multimedia;multimediawidgets;widgets</QtModules>
+    <QtModules>core</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
@@ -81,6 +73,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PreprocessorDefinitions>MATCHER_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -94,6 +87,7 @@
       <DebugInformationFormat>None</DebugInformationFormat>
       <Optimization>MaxSpeed</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PreprocessorDefinitions>MATCHER_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -101,33 +95,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CocoHelper.cpp" />
-    <QtRcc Include="QTGUI.qrc" />
-    <QtUic Include="QTGUI.ui" />
-    <QtMoc Include="QTGUI.h" />
-    <ClCompile Include="CustomTableItem.cpp" />
-    <ClCompile Include="GraphicsView.cpp" />
-    <ClCompile Include="ImageWidget.cpp" />
-    <ClCompile Include="QTGUI.cpp" />
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="CustomTableItem.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="CocoHelper.h" />
-    <ClInclude Include="ImageWidget.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="GraphicsView.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Detector\Detector.vcxproj">
-      <Project>{9518d0d3-bca5-4888-86bf-82b625758c8d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Matcher\Matcher.vcxproj">
-      <Project>{695e0da7-5a8b-47f7-ad29-10742315d12f}</Project>
-    </ProjectReference>
+    <ClInclude Include="matcher_global.h" />
+    <ClInclude Include="Matcher.h" />
+    <ClCompile Include="Matcher.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

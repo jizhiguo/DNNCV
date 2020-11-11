@@ -23,6 +23,7 @@ class ImageWidget :public QGraphicsItem
 {
     //Q_OBJECT
 public:
+    ImageWidget();
     ImageWidget(QPixmap* pixmap);
     QRectF  boundingRect() const;
     void    paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);

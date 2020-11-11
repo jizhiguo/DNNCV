@@ -6,6 +6,10 @@
 #include <QDrag>
 #include <math.h>
 
+ImageWidget::ImageWidget()
+{
+}
+
 ImageWidget::ImageWidget(QPixmap* pixmap)
 {
     m_pix = *pixmap;
