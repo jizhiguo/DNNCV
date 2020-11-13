@@ -369,11 +369,14 @@ const char* result_window = "Result window";
 int match_method;
 int max_Trackbar = 5;
 void on_matching(int, void*);
-
 void QTGUI::on_pushButton_8_clicked()
 {
-	QMessageBox::information(this, "adf", "asdf");
+	//Detector d;
+	//d.about(this);
 
+	QMessageBox::information(this, "adf",QString ("QThread::idealThreadCount()=%1").arg( QThread::idealThreadCount()));
+
+	//return;
 	img = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person.jpg");
 	if (!img.data)
 	{
@@ -395,8 +398,6 @@ void QTGUI::on_pushButton_8_clicked()
 	//cv::createTrackbar("方法", "原始图", &match_method, max_Trackbar, on_matching);
 
 	on_matching(0, NULL);
-
-
 
 	return;
 }
@@ -422,6 +423,8 @@ void on_matching(int, void*)
 	double minVal; double maxVal; Point minLoc; Point maxLoc;
 	Point matchLoc;
 	minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc, Mat());
+
+
 	if (match_method == TM_SQDIFF || match_method == TM_SQDIFF_NORMED)
 	{
 		matchLoc = minLoc;

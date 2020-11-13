@@ -23,11 +23,13 @@
     <ClInclude Include="detector_global.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClCompile Include="Detector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClInclude Include="Detector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Detector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
