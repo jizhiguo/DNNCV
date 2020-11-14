@@ -11,12 +11,15 @@
 #include "GraphicsView.h"
 #include "../Detector/Detector.h"
 #include "CocoHelper.h"
+using namespace std;
 using namespace cv;
+using namespace cv::xfeatures2d;
 
 QTGUI::QTGUI(QWidget* parent)
 	: QDialog(parent)
 {
 	ui.setupUi(this);
+	
 	setupTable1();
 	setupTable2();
 	//connect button signals & slot functions
@@ -296,9 +299,9 @@ void QTGUI::doDetection()
 	yoloCfgfilename = "D:\\Server_Project\\model\\yolov4.cfg";
 	yoloWeightsfilename = "D:\\Server_Project\\model\\yolov4.weights";
 	yoloCocofilename = "D:\\Server_Project\\model\\coco.names";
-	yoloCfgfilename = "D:\\yolov4\\darknet\\cfg\\yolov4.cfg";
-	yoloWeightsfilename = "D:\\yolov4\\darknet\\build\\darknet\\x64\\yolov4.weights";
-	yoloCocofilename = "D:\\yolov4\\darknet\\cfg\\coco.names";
+	//yoloCfgfilename = "D:\\yolov4\\darknet\\cfg\\yolov4.cfg";
+	//yoloWeightsfilename = "D:\\yolov4\\darknet\\build\\darknet\\x64\\yolov4.weights";
+	//yoloCocofilename = "D:\\yolov4\\darknet\\cfg\\coco.names";
 	cv::Mat img;
 	img = cv::imread(imgfilename.toStdString());
 	if (img.data == NULL)
@@ -360,23 +363,18 @@ bool  QTGUI::inChecklist(int classID)
 	return false;
 }
 
-
-
 bool use_mask;
 Mat img; Mat templ; Mat mask; Mat result;
 const char* image_window = "Source Image";
 const char* result_window = "Result window";
 int match_method;
 int max_Trackbar = 5;
-void on_matching(int, void*);
+void MatchingMethod(int, void*);
+
 void QTGUI::on_pushButton_8_clicked()
 {
-	//Detector d;
-	//d.about(this);
 
-	QMessageBox::information(this, "adf",QString ("QThread::idealThreadCount()=%1").arg( QThread::idealThreadCount()));
-
-	//return;
+	QMessageBox::information(this, "adf", QString("QThread::idealThreadCount()=%1").arg(QThread::idealThreadCount()));
 	img = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person.jpg");
 	if (!img.data)
 	{
@@ -389,21 +387,20 @@ void QTGUI::on_pushButton_8_clicked()
 		std::cout << "模板图读取失败" << endl;
 		return;
 	}
+	imshow("ICON", templ);
 
-	imshow("g_srcImage", img);
-	imshow("g_tempalteImage", templ);
+	namedWindow(image_window, WINDOW_AUTOSIZE);
+	namedWindow(result_window, WINDOW_AUTOSIZE);
 
-	cv::namedWindow("原始图", CV_WINDOW_AUTOSIZE);
-	cv::namedWindow("效果图", CV_WINDOW_AUTOSIZE);
-	//cv::createTrackbar("方法", "原始图", &match_method, max_Trackbar, on_matching);
-
-	on_matching(0, NULL);
+	const char* trackbar_label = "Method: \n 0: SQDIFF \n 1: SQDIFF NORMED \n 2: TM CCORR \n 3: TM CCORR NORMED \n 4: TM COEFF \n 5: TM COEFF NORMED";
+	createTrackbar(trackbar_label, image_window, &match_method, max_Trackbar, MatchingMethod);
+	MatchingMethod(0, 0);
 
 	return;
 }
 
 
-void on_matching(int, void*)
+void MatchingMethod(int, void*)
 {
 	Mat img_display;
 	img.copyTo(img_display);
@@ -423,8 +420,6 @@ void on_matching(int, void*)
 	double minVal; double maxVal; Point minLoc; Point maxLoc;
 	Point matchLoc;
 	minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc, Mat());
-
-
 	if (match_method == TM_SQDIFF || match_method == TM_SQDIFF_NORMED)
 	{
 		matchLoc = minLoc;
@@ -439,3 +434,298 @@ void on_matching(int, void*)
 	imshow(result_window, result);
 	return;
 }
+
+//void on_matching(int, void*)
+//{
+//	Mat img_display;
+//	img.copyTo(img_display);
+//	int result_cols = img.cols - templ.cols + 1;
+//	int result_rows = img.rows - templ.rows + 1;
+//	result.create(result_rows, result_cols, CV_32FC1);
+//	bool method_accepts_mask = (TM_SQDIFF == match_method || match_method == TM_CCORR_NORMED);
+//	if (use_mask && method_accepts_mask)
+//	{
+//		matchTemplate(img, templ, result, match_method, mask);
+//	}
+//	else
+//	{
+//		matchTemplate(img, templ, result, match_method);
+//	}
+//	normalize(result, result, 0, 1, NORM_MINMAX, -1, Mat());
+//	double minVal; double maxVal; Point minLoc; Point maxLoc;
+//	Point matchLoc;
+//	minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc, Mat());
+//
+//
+//	if (match_method == TM_SQDIFF || match_method == TM_SQDIFF_NORMED)
+//	{
+//		matchLoc = minLoc;
+//	}
+//	else
+//	{
+//		matchLoc = maxLoc;
+//	}
+//	rectangle(img_display, matchLoc, Point(matchLoc.x + templ.cols, matchLoc.y + templ.rows), Scalar::all(0), 2, 8, 0);
+//	rectangle(result, matchLoc, Point(matchLoc.x + templ.cols, matchLoc.y + templ.rows), Scalar::all(0), 2, 8, 0);
+//	putText(result, cv::String(QString("max=%1,min=%2").arg(maxVal).arg(minVal).toStdString()), Point(20, 20), 1, 1, Scalar::all(128), 2, 8, 0);
+//	imshow(image_window, img_display);
+//	imshow(result_window, result);
+//	return;
+//}
+
+
+
+Mat src_gray;
+int thresh = 100;
+RNG rng(12345);
+void thresh_callback(int, void*);
+
+void QTGUI::on_pushButton_9_clicked() {
+	Mat src = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person.jpg");
+	cvtColor(src, src_gray, COLOR_BGR2GRAY);
+	blur(src_gray, src_gray, Size(3, 3));
+	const char* source_window = "Source";
+	namedWindow(source_window);
+	imshow(source_window, src);
+	const int max_thresh = 255;
+	createTrackbar("Canny thresh:", source_window, &thresh, max_thresh, thresh_callback);
+	thresh_callback(0, 0);
+}
+
+void thresh_callback(int, void*)
+{
+	Mat canny_output;
+	Canny(src_gray, canny_output, thresh, thresh * 2);
+	vector<vector<Point> > contours;
+	vector<Vec4i> hierarchy;
+	findContours(canny_output, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+
+	vector<vector<Point> >hull(contours.size());
+	for (size_t i = 0; i < contours.size(); i++)
+	{
+		//convexHull(contours[i], hull[i]);
+	}
+
+	Mat drawing = Mat::zeros(canny_output.size(), CV_8UC3);
+	for (size_t i = 0; i < contours.size(); i++)
+	{
+		Scalar color = Scalar(rng.uniform(0, 256), rng.uniform(0, 256), rng.uniform(0, 256));
+		drawContours(drawing, contours, (int)i, color, 2, LINE_8, hierarchy, 0);
+		//drawContours(drawing, hull, (int)i, color);
+	}
+	imshow("Contours", drawing);
+}
+void QTGUI::on_pushButton_10_clicked() {
+	Mat src = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person2.jpg");
+	//-- Step 1: Detect the keypoints using SURF Detector
+	int minHessian = 400;
+	Ptr<SURF> detector = SURF::create(minHessian);
+	std::vector<KeyPoint> keypoints;
+	detector->detect(src, keypoints);
+	//-- Draw keypoints
+	Mat img_keypoints;
+	drawKeypoints(src, keypoints, img_keypoints);
+	//-- Show detected (drawn) keypoints
+	imshow("SURF Keypoints", img_keypoints);
+
+	src = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person3.jpg");
+	keypoints.clear();
+	detector->detect(src, keypoints);
+	drawKeypoints(src, keypoints, img_keypoints);
+	imshow("SURF Keypoints3", img_keypoints);
+
+	src = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person4.jpg");
+	keypoints.clear();
+	detector->detect(src, keypoints);
+	drawKeypoints(src, keypoints, img_keypoints);
+	imshow("SURF Keypoints4", img_keypoints);
+
+	src = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person5.jpg");
+	keypoints.clear();
+	detector->detect(src, keypoints);
+	drawKeypoints(src, keypoints, img_keypoints);
+	imshow("SURF Keypoints5", img_keypoints);
+
+	src = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person6.jpg");
+	keypoints.clear();
+	detector->detect(src, keypoints);
+	drawKeypoints(src, keypoints, img_keypoints);
+	imshow("SURF Keypoints6", img_keypoints);
+
+	src = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person7.jpg");
+	keypoints.clear();
+	detector->detect(src, keypoints);
+	drawKeypoints(src, keypoints, img_keypoints);
+	imshow("SURF Keypoints7", img_keypoints);
+
+}
+void QTGUI::on_pushButton_11_clicked() {
+	// Declare the output variables
+	Mat dst, cdst, cdstP;
+	// Loads an image
+	Mat src = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person.jpg");
+	// Check if image is loaded fine
+	if (src.empty()) {
+		return;
+	}
+	// Edge detection
+	Canny(src, dst, 50, 200, 3);
+	// Copy edges to the images that will display the results in BGR
+	cvtColor(dst, cdst, COLOR_GRAY2BGR);
+	cdstP = cdst.clone();
+	// Standard Hough Line Transform
+	vector<Vec2f> lines; // will hold the results of the detection
+	HoughLines(dst, lines, 1, CV_PI / 180, 150, 0, 0); // runs the actual detection
+	// Draw the lines
+	for (size_t i = 0; i < lines.size(); i++)
+	{
+		float rho = lines[i][0], theta = lines[i][1];
+		Point pt1, pt2;
+		double a = cos(theta), b = sin(theta);
+		double x0 = a * rho, y0 = b * rho;
+		pt1.x = cvRound(x0 + 1000 * (-b));
+		pt1.y = cvRound(y0 + 1000 * (a));
+		pt2.x = cvRound(x0 - 1000 * (-b));
+		pt2.y = cvRound(y0 - 1000 * (a));
+		line(cdst, pt1, pt2, Scalar(0, 0, 255), 3, LINE_AA);
+	}
+	// Probabilistic Line Transform
+	vector<Vec4i> linesP; // will hold the results of the detection
+	HoughLinesP(dst, linesP, 1, CV_PI / 180, 50, 50, 10); // runs the actual detection
+	// Draw the lines
+	for (size_t i = 0; i < linesP.size(); i++)
+	{
+		Vec4i l = linesP[i];
+		line(cdstP, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0, 0, 255), 3, LINE_AA);
+	}
+	// Show results
+	imshow("Source", src);
+	imshow("Detected Lines (in red) - Standard Hough Line Transform", cdst);
+	imshow("Detected Lines (in red) - Probabilistic Line Transform", cdstP);
+}
+
+void QTGUI::on_pushButton_12_clicked()
+{
+	int64 t1 = cv::getTickCount();
+	Mat img1 = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person.jpg");
+	Mat img2 = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person2.jpg");
+	if (img1.empty() || img2.empty())
+	{
+		cout << "Could not open or find the image!\n" << endl;
+		return;
+	}
+
+	//-- Step 1: Detect the keypoints using SURF Detector, compute the descriptors
+	int minHessian = 400;
+	Ptr<SURF> detector = SURF::create(minHessian);
+	std::vector<KeyPoint> keypoints1, keypoints2;
+	Mat descriptors1, descriptors2;
+	detector->detectAndCompute(img1, noArray(), keypoints1, descriptors1);
+	detector->detectAndCompute(img2, noArray(), keypoints2, descriptors2);
+
+	////-- Step 2: Matching descriptor vectors with a brute force matcher
+	//// Since SURF is a floating-point descriptor NORM_L2 is used
+	//Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create(DescriptorMatcher::BRUTEFORCE);
+	//std::vector< DMatch > matches;
+	//matcher->match(descriptors1, descriptors2, matches);
+	////-- Draw matches
+	//Mat img_matches;
+	//drawMatches(img1, keypoints1, img2, keypoints2, matches, img_matches);
+	////-- Show detected matches
+	//imshow("Matches", img_matches);
+
+	  //-- Step 2: Matching descriptor vectors with a FLANN based matcher
+	// Since SURF is a floating-point descriptor NORM_L2 is used
+	Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create(DescriptorMatcher::FLANNBASED);
+	std::vector< std::vector<DMatch> > knn_matches;
+	matcher->knnMatch(descriptors1, descriptors2, knn_matches, 2);
+	//-- Filter matches using the Lowe's ratio test
+	const float ratio_thresh = 0.4f; 
+	
+	std::vector<DMatch> good_matches;
+	for (size_t i = 0; i < knn_matches.size(); i++)
+	{
+		//if (knn_matches[i][0].distance < ratio_thresh * knn_matches[i][1].distance)
+		if (knn_matches[i][0].distance < ui.doubleSpinBox->value() * knn_matches[i][1].distance)
+		{
+			good_matches.push_back(knn_matches[i][0]);
+		}
+	}
+	//-- Draw matches
+	Mat img_matches;
+	drawMatches(img1, keypoints1, img2, keypoints2, good_matches, img_matches, Scalar::all(-1),
+		Scalar::all(-1), std::vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+	//-- Show detected matches
+	putText(img_matches, QString("%1").arg((getTickCount() - t1) / getTickFrequency() / 1000).toStdString(), Point(10, 10), 1, 1, Scalar::all(128));
+	imshow("Good Matches", img_matches);
+
+}
+
+void QTGUI::on_pushButton_13_clicked()
+{
+
+	Mat img_scene = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person.jpg");
+	Mat img_object = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person2.jpg");
+
+	if (img_object.empty() || img_scene.empty())
+	{
+		cout << "Could not open or find the image!\n" << endl;
+		return;
+	}
+	//-- Step 1: Detect the keypoints using SURF Detector, compute the descriptors
+	int minHessian = 400;
+	Ptr<SURF> detector = SURF::create(minHessian);
+	std::vector<KeyPoint> keypoints_object, keypoints_scene;
+	Mat descriptors_object, descriptors_scene;
+	detector->detectAndCompute(img_object, noArray(), keypoints_object, descriptors_object);
+	detector->detectAndCompute(img_scene, noArray(), keypoints_scene, descriptors_scene);
+	//-- Step 2: Matching descriptor vectors with a FLANN based matcher
+	// Since SURF is a floating-point descriptor NORM_L2 is used
+	Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create(DescriptorMatcher::FLANNBASED);
+	std::vector< std::vector<DMatch> > knn_matches;
+	matcher->knnMatch(descriptors_object, descriptors_scene, knn_matches, 2);
+	//-- Filter matches using the Lowe's ratio test
+	const float ratio_thresh = 0.75f;
+	std::vector<DMatch> good_matches;
+	for (size_t i = 0; i < knn_matches.size(); i++)
+	{
+		if (knn_matches[i][0].distance < ratio_thresh * knn_matches[i][1].distance)
+		{
+			good_matches.push_back(knn_matches[i][0]);
+		}
+	}
+	//-- Draw matches
+	Mat img_matches;
+	drawMatches(img_object, keypoints_object, img_scene, keypoints_scene, good_matches, img_matches, Scalar::all(-1),
+		Scalar::all(-1), std::vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+	//-- Localize the object
+	std::vector<Point2f> obj;
+	std::vector<Point2f> scene;
+	for (size_t i = 0; i < good_matches.size(); i++)
+	{
+		//-- Get the keypoints from the good matches
+		obj.push_back(keypoints_object[good_matches[i].queryIdx].pt);
+		scene.push_back(keypoints_scene[good_matches[i].trainIdx].pt);
+	}
+	Mat H = findHomography(obj, scene, RANSAC);
+	//-- Get the corners from the image_1 ( the object to be "detected" )
+	std::vector<Point2f> obj_corners(4);
+	obj_corners[0] = Point2f(0, 0);
+	obj_corners[1] = Point2f((float)img_object.cols, 0);
+	obj_corners[2] = Point2f((float)img_object.cols, (float)img_object.rows);
+	obj_corners[3] = Point2f(0, (float)img_object.rows);
+	std::vector<Point2f> scene_corners(4);
+	perspectiveTransform(obj_corners, scene_corners, H);
+	//-- Draw lines between the corners (the mapped object in the scene - image_2 )
+	line(img_matches, scene_corners[0] + Point2f((float)img_object.cols, 0),
+		scene_corners[1] + Point2f((float)img_object.cols, 0), Scalar(0, 255, 0), 4);
+	line(img_matches, scene_corners[1] + Point2f((float)img_object.cols, 0),
+		scene_corners[2] + Point2f((float)img_object.cols, 0), Scalar(0, 255, 0), 4);
+	line(img_matches, scene_corners[2] + Point2f((float)img_object.cols, 0),
+		scene_corners[3] + Point2f((float)img_object.cols, 0), Scalar(0, 255, 0), 4);
+	line(img_matches, scene_corners[3] + Point2f((float)img_object.cols, 0),
+		scene_corners[0] + Point2f((float)img_object.cols, 0), Scalar(0, 255, 0), 4);
+	//-- Show detected matches
+	imshow("Good Matches & Object detection", img_matches);
+}
+

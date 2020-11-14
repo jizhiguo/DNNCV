@@ -1,5 +1,4 @@
 #include "Detector.h"
-#include <QtWidgets/QDialog>
 
 Detector::Detector()
 {}
@@ -112,11 +111,6 @@ std::vector<std::string> Detector::objects_names_from_file(std::string const fil
 	for (std::string line; getline(file, line);) file_lines.push_back(line);
 	std::cout << "object names loaded \n";
 	return file_lines;
-}
-void Detector::about(QWidget* parent)
-{
-	QDialog d(parent);
-	d.show();
 }
 
 void Detector::setupNet(QString sCfgFile, QString sWeightFile, QString sCoconamesFile)

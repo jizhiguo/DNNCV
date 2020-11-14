@@ -21,8 +21,7 @@ public:
     Detector();
     Detector(QString sCfgFile, QString sWeightFile, QString sCoconamesFile);
     std::vector<std::string> objects_names_from_file(std::string const filename);
-    void about(QWidget* parent);
-
+   
 private:
     QString yoloCfg;
     QString yoloWeights;
