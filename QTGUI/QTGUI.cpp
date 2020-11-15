@@ -618,6 +618,7 @@ void QTGUI::on_pushButton_12_clicked()
 	//-- Step 1: Detect the keypoints using SURF Detector, compute the descriptors
 	int minHessian = 400;
 	Ptr<SURF> detector = SURF::create(minHessian);
+	//Ptr<FeatureDetector> detector= FeatureDetector::loadFromString("");
 	std::vector<KeyPoint> keypoints1, keypoints2;
 	Mat descriptors1, descriptors2;
 	detector->detectAndCompute(img1, noArray(), keypoints1, descriptors1);
