@@ -19,7 +19,7 @@ QTGUI::QTGUI(QWidget* parent)
 	: QDialog(parent)
 {
 	ui.setupUi(this);
-	
+
 	setupTable1();
 	setupTable2();
 	//connect button signals & slot functions
@@ -299,9 +299,9 @@ void QTGUI::doDetection()
 	yoloCfgfilename = "D:\\Server_Project\\model\\yolov4.cfg";
 	yoloWeightsfilename = "D:\\Server_Project\\model\\yolov4.weights";
 	yoloCocofilename = "D:\\Server_Project\\model\\coco.names";
-	//yoloCfgfilename = "D:\\yolov4\\darknet\\cfg\\yolov4.cfg";
-	//yoloWeightsfilename = "D:\\yolov4\\darknet\\build\\darknet\\x64\\yolov4.weights";
-	//yoloCocofilename = "D:\\yolov4\\darknet\\cfg\\coco.names";
+	yoloCfgfilename = "D:\\yolov4\\darknet\\cfg\\yolov4.cfg";
+	yoloWeightsfilename = "D:\\yolov4\\darknet\\build\\darknet\\x64\\yolov4.weights";
+	yoloCocofilename = "D:\\yolov4\\darknet\\cfg\\coco.names";
 	cv::Mat img;
 	img = cv::imread(imgfilename.toStdString());
 	if (img.data == NULL)
@@ -325,9 +325,9 @@ void QTGUI::doDetection()
 	}
 	//cv::namedWindow("camera", CV_WINDOW_NORMAL);
 	//cv::imshow("camera", img);
-	Coconames c;
-	cv::Mat im = c.Base2Mat(c.Mat2Base64(img, "jpg"));
-	cv::imshow("camera", im);
+	//Coconames c;
+	//cv::Mat im = c.Base2Mat(c.Mat2Base64(img, "jpg"));
+	//cv::imshow("camera", im);
 	size_t len = out_Boxes.size();
 	cv::Rect cr;
 	for (size_t i = 0; i < len; i++) {
@@ -607,8 +607,8 @@ void QTGUI::on_pushButton_11_clicked() {
 void QTGUI::on_pushButton_12_clicked()
 {
 	int64 t1 = cv::getTickCount();
-	Mat img1 = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person.jpg");
-	Mat img2 = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person2.jpg");
+	Mat img1 = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\wall.jpg");
+	Mat img2 = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\wall2.jpg");
 	if (img1.empty() || img2.empty())
 	{
 		cout << "Could not open or find the image!\n" << endl;
@@ -639,14 +639,30 @@ void QTGUI::on_pushButton_12_clicked()
 	// Since SURF is a floating-point descriptor NORM_L2 is used
 	Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create(DescriptorMatcher::FLANNBASED);
 	std::vector< std::vector<DMatch> > knn_matches;
-	matcher->knnMatch(descriptors1, descriptors2, knn_matches, 2);
+	if (descriptors1.data && descriptors2.data)	
+	{ 
+		matcher->knnMatch(descriptors1, descriptors2, knn_matches, 2);
+	}
 	//-- Filter matches using the Lowe's ratio test
-	const float ratio_thresh = 0.4f; 
-	
+	const float ratio_thresh = 0.4f;
 	std::vector<DMatch> good_matches;
+
+	ofstream file(QCoreApplication::applicationDirPath().toStdString() + "\\text.txt");
+
+	std::vector<std::pair<double, int>> visibility;
+	for (int i = 0; i < 10; i++)
+	{
+		visibility.push_back(std::pair<double, int>(ui.doubleSpinBox->value() / 10 * ((double)i + 1), 0));
+	}
 	for (size_t i = 0; i < knn_matches.size(); i++)
 	{
+		file << knn_matches[i][0].distance / knn_matches[i][1].distance << "\t";
 		//if (knn_matches[i][0].distance < ratio_thresh * knn_matches[i][1].distance)
+		for (size_t j = 0; j < 10; j++)
+		{
+			if ((knn_matches[i][0].distance / knn_matches[i][1].distance) < visibility[j].first) visibility[j].second++;
+		}
+
 		if (knn_matches[i][0].distance < ui.doubleSpinBox->value() * knn_matches[i][1].distance)
 		{
 			good_matches.push_back(knn_matches[i][0]);
@@ -656,8 +672,19 @@ void QTGUI::on_pushButton_12_clicked()
 	Mat img_matches;
 	drawMatches(img1, keypoints1, img2, keypoints2, good_matches, img_matches, Scalar::all(-1),
 		Scalar::all(-1), std::vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+	int vscale;
+	for (size_t i = 0; i < visibility.size(); i++)
+	{
+		if (visibility[i].second > 0)
+		{
+			vscale = visibility.size() - i - 1;
+			break;
+		}
+	}
+	putText(img_matches, QString("visibility scale:%1,time elapsed:%2 ms")
+		.arg(vscale)
+		.arg((getTickCount() - t1) / getTickFrequency() / 1000).toStdString(), Point(100, 100), 1, 1, Scalar::all(255));
 	//-- Show detected matches
-	putText(img_matches, QString("%1").arg((getTickCount() - t1) / getTickFrequency() / 1000).toStdString(), Point(10, 10), 1, 1, Scalar::all(128));
 	imshow("Good Matches", img_matches);
 
 }
