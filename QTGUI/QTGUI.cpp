@@ -299,9 +299,9 @@ void QTGUI::doDetection()
 	yoloCfgfilename = "D:\\Server_Project\\model\\yolov4.cfg";
 	yoloWeightsfilename = "D:\\Server_Project\\model\\yolov4.weights";
 	yoloCocofilename = "D:\\Server_Project\\model\\coco.names";
-	yoloCfgfilename = "D:\\yolov4\\darknet\\cfg\\yolov4.cfg";
-	yoloWeightsfilename = "D:\\yolov4\\darknet\\build\\darknet\\x64\\yolov4.weights";
-	yoloCocofilename = "D:\\yolov4\\darknet\\cfg\\coco.names";
+	//yoloCfgfilename = "D:\\yolov4\\darknet\\cfg\\yolov4.cfg";
+	//yoloWeightsfilename = "D:\\yolov4\\darknet\\build\\darknet\\x64\\yolov4.weights";
+	//yoloCocofilename = "D:\\yolov4\\darknet\\cfg\\coco.names";
 	cv::Mat img;
 	img = cv::imread(imgfilename.toStdString());
 	if (img.data == NULL)
@@ -323,8 +323,8 @@ void QTGUI::doDetection()
 		ui.textBrowser->append(QString(u8"未侦测到任何对象.(confidence=%1)").arg(confidence));
 		return;
 	}
-	//cv::namedWindow("camera", CV_WINDOW_NORMAL);
-	//cv::imshow("camera", img);
+	cv::namedWindow("camera", CV_WINDOW_NORMAL);
+	cv::imshow("camera", img);
 	//Coconames c;
 	//cv::Mat im = c.Base2Mat(c.Mat2Base64(img, "jpg"));
 	//cv::imshow("camera", im);
@@ -516,7 +516,7 @@ void thresh_callback(int, void*)
 	imshow("Contours", drawing);
 }
 void QTGUI::on_pushButton_10_clicked() {
-	Mat src = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person2.jpg");
+	Mat src = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\wall.jpg");
 	//-- Step 1: Detect the keypoints using SURF Detector
 	int minHessian = 400;
 	Ptr<SURF> detector = SURF::create(minHessian);
@@ -528,7 +528,7 @@ void QTGUI::on_pushButton_10_clicked() {
 	//-- Show detected (drawn) keypoints
 	imshow("SURF Keypoints", img_keypoints);
 
-	src = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person3.jpg");
+	/*src = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person3.jpg");
 	keypoints.clear();
 	detector->detect(src, keypoints);
 	drawKeypoints(src, keypoints, img_keypoints);
@@ -556,7 +556,7 @@ void QTGUI::on_pushButton_10_clicked() {
 	keypoints.clear();
 	detector->detect(src, keypoints);
 	drawKeypoints(src, keypoints, img_keypoints);
-	imshow("SURF Keypoints7", img_keypoints);
+	imshow("SURF Keypoints7", img_keypoints);*/
 
 }
 void QTGUI::on_pushButton_11_clicked() {
@@ -639,8 +639,8 @@ void QTGUI::on_pushButton_12_clicked()
 	// Since SURF is a floating-point descriptor NORM_L2 is used
 	Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create(DescriptorMatcher::FLANNBASED);
 	std::vector< std::vector<DMatch> > knn_matches;
-	if (descriptors1.data && descriptors2.data)	
-	{ 
+	if (descriptors1.data && descriptors2.data)
+	{
 		matcher->knnMatch(descriptors1, descriptors2, knn_matches, 2);
 	}
 	//-- Filter matches using the Lowe's ratio test
@@ -672,7 +672,7 @@ void QTGUI::on_pushButton_12_clicked()
 	Mat img_matches;
 	drawMatches(img1, keypoints1, img2, keypoints2, good_matches, img_matches, Scalar::all(-1),
 		Scalar::all(-1), std::vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
-	int vscale;
+	int vscale = 0;
 	for (size_t i = 0; i < visibility.size(); i++)
 	{
 		if (visibility[i].second > 0)
