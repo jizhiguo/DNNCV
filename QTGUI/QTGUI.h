@@ -26,7 +26,7 @@ private:
 	QString yoloWeightsfilename;//yolo权重文件路径
 	QString yoloCocofilename;//yolo分类文件路径
 
-	QGraphicsScene* scene = new QGraphicsScene;
+	QGraphicsScene* scene = NULL;
 	QGraphicsPolygonItem* polygon = NULL;
 	ImageWidget* imageWidget = NULL;
 	bool inPoly(cv::Rect box);

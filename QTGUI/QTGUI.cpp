@@ -170,12 +170,11 @@ void QTGUI::load_image(QString& filename)
 
 void QTGUI::load_image(QImage image)
 {
-	if (!scene)
-		scene = new QGraphicsScene;
+	if (!scene)		scene = new QGraphicsScene;
 	scene->clear();
 	ui.graphicsView->m_MousePressPos.clear();
 	QPixmap qPixmap = QPixmap::fromImage(image);
-	imageWidget = new ImageWidget(&qPixmap);//实例化类ImageWidget的对象m_Image，该类继承自QGraphicsItem
+	if (!imageWidget)imageWidget = new ImageWidget(&qPixmap);//实例化类ImageWidget的对象m_Image，该类继承自QGraphicsItem
 	int nwith = ui.graphicsView->width();//获取界面控件Graphics View的宽度
 	int nheight = ui.graphicsView->height();//获取界面控件Graphics View的高度
 	imageWidget->setQGraphicsViewWH(nwith, nheight);//将界面控件Graphics View的width和height传进类m_Image中
@@ -285,10 +284,13 @@ void QTGUI::onSigDrawPolygon()
 		f = ui.graphicsView->mapFromScene(iterator.next());//场景坐标转视图坐标
 		model->appendRow(items);
 		aItem = new QStandardItem(QString("%1").arg(i));
+		delete model->item(i, 0);
 		model->setItem(i, 0, aItem);
 		aItem = new QStandardItem(QString("%1").arg(f.x()));
+		delete model->item(i, 1);
 		model->setItem(i, 1, aItem);
 		aItem = new QStandardItem(QString("%1").arg(f.y()));
+		delete model->item(i, 2);
 		model->setItem(i, 2, aItem);
 		i++;
 	}
@@ -639,8 +641,8 @@ void QTGUI::on_pushButton_12_clicked()
 	// Since SURF is a floating-point descriptor NORM_L2 is used
 	Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create(DescriptorMatcher::FLANNBASED);
 	std::vector< std::vector<DMatch> > knn_matches;
-	if (descriptors1.data && descriptors2.data)	
-	{ 
+	if (descriptors1.data && descriptors2.data)
+	{
 		matcher->knnMatch(descriptors1, descriptors2, knn_matches, 2);
 	}
 	//-- Filter matches using the Lowe's ratio test
