@@ -685,7 +685,7 @@ void QTGUI::on_pushButton_12_clicked()
 	}
 	putText(img_matches, QString("visibility scale:%1,time elapsed:%2 ms")
 		.arg(vscale)
-		.arg((getTickCount() - t1) / getTickFrequency() / 1000).toStdString(), Point(100, 100), 1, 1, Scalar::all(255));
+		.arg((getTickCount() - t1) / getTickFrequency() * 1000).toStdString(), Point(100, 100), 1, 1, Scalar::all(255));
 	//-- Show detected matches
 	imshow("Good Matches", img_matches);
 
@@ -693,9 +693,10 @@ void QTGUI::on_pushButton_12_clicked()
 
 void QTGUI::on_pushButton_13_clicked()
 {
+	int64 t1 = cv::getTickCount();
 
-	Mat img_scene = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person.jpg");
-	Mat img_object = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person2.jpg");
+	Mat img_scene = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\wall.jpg");
+	Mat img_object = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\wall2.jpg");
 
 	if (img_object.empty() || img_scene.empty())
 	{
@@ -709,6 +710,7 @@ void QTGUI::on_pushButton_13_clicked()
 	Mat descriptors_object, descriptors_scene;
 	detector->detectAndCompute(img_object, noArray(), keypoints_object, descriptors_object);
 	detector->detectAndCompute(img_scene, noArray(), keypoints_scene, descriptors_scene);
+	int64 t2 = (getTickCount() - t1) / getTickFrequency() * 1000;
 	//-- Step 2: Matching descriptor vectors with a FLANN based matcher
 	// Since SURF is a floating-point descriptor NORM_L2 is used
 	Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create(DescriptorMatcher::FLANNBASED);
@@ -719,7 +721,8 @@ void QTGUI::on_pushButton_13_clicked()
 	std::vector<DMatch> good_matches;
 	for (size_t i = 0; i < knn_matches.size(); i++)
 	{
-		if (knn_matches[i][0].distance < ratio_thresh * knn_matches[i][1].distance)
+		//if (knn_matches[i][0].distance < ratio_thresh * knn_matches[i][1].distance)
+		if (knn_matches[i][0].distance < ui.doubleSpinBox->value() * knn_matches[i][1].distance)
 		{
 			good_matches.push_back(knn_matches[i][0]);
 		}
@@ -737,11 +740,14 @@ void QTGUI::on_pushButton_13_clicked()
 		obj.push_back(keypoints_object[good_matches[i].queryIdx].pt);
 		scene.push_back(keypoints_scene[good_matches[i].trainIdx].pt);
 	}
-	Mat H = findHomography(obj, scene, RANSAC);
+	if (!obj.size() > 0 || !scene.size() > 0)return;
+	Mat H = findHomography(obj, scene, RANSAC, 3, noArray(), 2000, 0.995);
+	if (!H.data) return;
 	//-- Get the corners from the image_1 ( the object to be "detected" )
 	std::vector<Point2f> obj_corners(4);
 	obj_corners[0] = Point2f(0, 0);
 	obj_corners[1] = Point2f((float)img_object.cols, 0);
+	//obj_corners[2] = Point2f((float)img_object.cols * 1.5, (float)img_object.rows * 0.5);
 	obj_corners[2] = Point2f((float)img_object.cols, (float)img_object.rows);
 	obj_corners[3] = Point2f(0, (float)img_object.rows);
 	std::vector<Point2f> scene_corners(4);
@@ -755,6 +761,9 @@ void QTGUI::on_pushButton_13_clicked()
 		scene_corners[3] + Point2f((float)img_object.cols, 0), Scalar(0, 255, 0), 4);
 	line(img_matches, scene_corners[3] + Point2f((float)img_object.cols, 0),
 		scene_corners[0] + Point2f((float)img_object.cols, 0), Scalar(0, 255, 0), 4);
+	putText(img_matches, QString("t2=%1,time elapsed:%2 ms")
+		.arg(t2)
+		.arg((getTickCount() - t1) / getTickFrequency() * 1000).toStdString(), Point(100, 100), 1, 1, Scalar::all(255));
 	//-- Show detected matches
 	imshow("Good Matches & Object detection", img_matches);
 }
