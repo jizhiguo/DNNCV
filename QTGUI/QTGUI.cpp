@@ -376,14 +376,14 @@ void MatchingMethod(int, void*);
 void QTGUI::on_pushButton_8_clicked()
 {
 
-	QMessageBox::information(this, "adf", QString("QThread::idealThreadCount()=%1").arg(QThread::idealThreadCount()));
-	img = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person.jpg");
+	//QMessageBox::information(this, "adf", QString("QThread::idealThreadCount()=%1").arg(QThread::idealThreadCount()));
+	img = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\wall.jpg");
 	if (!img.data)
 	{
 		std::cout << "Ô­Ê¼Í¼¶ÁÈ¡Ê§°Ü" << endl;
 		return;
 	}
-	templ = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\person2.jpg");
+	templ = cv::imread(QCoreApplication::applicationDirPath().toStdString() + "\\wall2.jpg");
 	if (!templ.data)
 	{
 		std::cout << "Ä£°åÍ¼¶ÁÈ¡Ê§°Ü" << endl;
@@ -404,6 +404,7 @@ void QTGUI::on_pushButton_8_clicked()
 
 void MatchingMethod(int, void*)
 {
+	int64 t1 = getTickCount();
 	Mat img_display;
 	img.copyTo(img_display);
 	int result_cols = img.cols - templ.cols + 1;
@@ -430,6 +431,8 @@ void MatchingMethod(int, void*)
 	{
 		matchLoc = maxLoc;
 	}
+	putText(result, cv::String(QString("time elapsed:%1 ms").arg((getTickCount()-t1)/getTickFrequency()*1000).toStdString()), Point(20, 20), 1, 1, Scalar::all(128), 2, 8, 0);
+	putText(img_display, cv::String(QString("time elapsed:%1 ms").arg((getTickCount()-t1)/getTickFrequency()*1000).toStdString()), Point(20, 20), 1, 1, Scalar::all(128), 2, 8, 0);
 	rectangle(img_display, matchLoc, Point(matchLoc.x + templ.cols, matchLoc.y + templ.rows), Scalar::all(0), 2, 8, 0);
 	rectangle(result, matchLoc, Point(matchLoc.x + templ.cols, matchLoc.y + templ.rows), Scalar::all(0), 2, 8, 0);
 	imshow(image_window, img_display);
