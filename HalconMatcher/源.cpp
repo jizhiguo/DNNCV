@@ -391,7 +391,7 @@ static void apple_main(void)
 #endif
 
 
-int main(int argc, char* argv[])
+int main1(int argc, char* argv[])
 {
 #if defined(_WIN32)
     SetSystem("use_window_thread", "true");
