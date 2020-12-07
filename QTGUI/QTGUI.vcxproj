@@ -117,6 +117,7 @@
   <ItemGroup>
     <ClInclude Include="CocoHelper.h" />
     <ClInclude Include="ImageWidget.h" />
+    <ClInclude Include="ThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="GraphicsView.h" />
