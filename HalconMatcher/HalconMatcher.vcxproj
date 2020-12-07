@@ -82,13 +82,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(halconroot)\include\hdevengine;$(halconroot)\include\halconcpp;$(halconroot)\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(halconroot)\lib\x64-win64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(HALCONROOT)\include\halconcpp;$(HALCONROOT)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(HALCONROOT)\lib\x64-win64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(halconroot)\include\hdevengine;$(halconroot)\include\halconcpp;$(halconroot)\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(halconroot)\lib\x64-win64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(HALCONROOT)\include\halconcpp;$(HALCONROOT)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(HALCONROOT)\lib\x64-win64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
