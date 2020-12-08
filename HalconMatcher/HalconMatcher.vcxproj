@@ -82,13 +82,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(HALCONROOT)\include\halconcpp;$(HALCONROOT)\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(HALCONROOT)\lib\x64-win64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(HALCONROOT)\include\halconcpp;$(HALCONROOT)\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(HALCONROOT)\lib\x64-win64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -149,8 +145,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="源.cpp" />
+    <ClCompile Include="HalconMatcher.cpp" />
     <ClCompile Include="源1.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="HalconMatcher.h" />
+    <ClInclude Include="ThreadPool.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

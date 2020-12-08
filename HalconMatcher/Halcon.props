@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IncludePath>$(halconroot)\include\hdevengine;$(halconroot)\include\halconcpp;$(halconroot)\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(halconroot)\include\halconcpp;$(halconroot)\include\hdevengine;$(halconroot)\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(halconroot)\lib\x64-win64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
