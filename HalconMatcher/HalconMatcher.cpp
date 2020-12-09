@@ -29,12 +29,12 @@ void HMatcher::doMatching(HTuple& ModelID, HObject& image, HTuple& rows, HTuple&
 		ScaledShapeMatch::scaled_shape_match(image, ModelID, &rows, &cols, &angles, &scales, &scores);
 		long t2 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 		std::cout <<
-			"\trows:" << rows[0].D() << "," <<
-			"\tcols:" << cols[0].D() << "," <<
-			"\tangles:" << angles[0].D() << "," <<
-			"\tscales:" << scales[0].D() << "," <<
-			"\tscores:" << scores[0].D() << "," <<
-			"\ttime elapsed:" << t2 - t1 << "ms" << std::endl;
+			"\t(1)rows:" << rows[0].D() << "," <<
+			"\t(2)cols:" << cols[0].D() << "," <<
+			"\t(3)angles:" << angles[0].D() << "," <<
+			"\t(4)scales:" << scales[0].D() << "," <<
+			"\t(5)scores:" << scores[0].D() << "," <<
+			"\t(6)time elapsed:" << t2 - t1 << "ms" << std::endl;
 	}
 	catch (const std::exception&)
 	{

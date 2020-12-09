@@ -25,7 +25,7 @@
 <l>ImageOut := Image</l>
 <c as_id="matching" as_name="Matching 01" as_grp="[0]" as_ord="9">* </c>
 <c as_id="matching" as_name="Matching 01" as_grp="[1,1,1]" as_ord="1">* Matching 01: Obtain the model image</c>
-<l as_id="matching" as_name="Matching 01" as_grp="[1,1,1]" as_ord="2">read_image (ImageOut, 'D:/temp/temp/wall2.jpg')</l>
+<l as_id="matching" as_name="Matching 01" as_grp="[1,1,1]" as_ord="2">*read_image (ImageOut, 'D:/temp/temp/wall2.jpg')</l>
 <c as_id="matching" as_name="Matching 01" as_grp="[1,1,2]" as_ord="1">* </c>
 <c as_id="matching" as_name="Matching 01" as_grp="[1,1,2]" as_ord="2">* Matching 01: Build the ROI from basic regions</c>
 <l as_id="matching" as_name="Matching 01" as_grp="[1,1,2]" as_ord="3">gen_rectangle1 (ModelRegionOut, 309.144, 476.5, 533.61, 764.5)</l>
