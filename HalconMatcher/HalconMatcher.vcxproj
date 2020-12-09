@@ -146,10 +146,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="HalconMatcher.cpp" />
+    <ClCompile Include="ScaledShapeMatch.cpp" />
     <ClCompile Include="源1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HalconMatcher.h" />
+    <ClInclude Include="ScaledShapeMatch.h" />
     <ClInclude Include="ThreadPool.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

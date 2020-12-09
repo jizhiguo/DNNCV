@@ -12,7 +12,8 @@ public:
 	
 	HMatcher();
 	~HMatcher();
-	void doMatching(HObject& imageTemplate, HObject& image, HTuple& rows, HTuple& cols, HTuple& angles, HTuple& scales, HTuple& scores);
+	void doMatching(HTuple& ModelID, HObject& image, HTuple& rows, HTuple& cols, HTuple& angles, HTuple& scales, HTuple& scores);
+	//void doMatching(HObject& imageTemplate, HObject& image, HTuple& rows, HTuple& cols, HTuple& angles, HTuple& scales, HTuple& scores);
 
 };
 

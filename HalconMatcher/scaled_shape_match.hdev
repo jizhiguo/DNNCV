@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.1" halcon_version="17.12">
+<procedure name="main">
+<interface/>
+<body>
+<l>read_image (Image, 'printer_chip/printer_chip_01')</l>
+<l>createTemplateImg (Image, ModelID)</l>
+<l>scaled_shape_match (Image, ModelID, Row, Column, Angle, Scale, Score)</l>
+<c as_id="matching" as_name="Matching 01" as_grp="[12]" as_ord="4"></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+<procedure name="createTemplateImg">
+<interface>
+<io>
+<par name="Image" base_type="iconic" dimension="0"/>
+</io>
+<oc>
+<par name="ModelID" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>ImageOut := Image</l>
+<c as_id="matching" as_name="Matching 01" as_grp="[0]" as_ord="9">* </c>
+<c as_id="matching" as_name="Matching 01" as_grp="[1,1,1]" as_ord="1">* Matching 01: Obtain the model image</c>
+<l as_id="matching" as_name="Matching 01" as_grp="[1,1,1]" as_ord="2">read_image (ImageOut, 'D:/temp/temp/wall2.jpg')</l>
+<c as_id="matching" as_name="Matching 01" as_grp="[1,1,2]" as_ord="1">* </c>
+<c as_id="matching" as_name="Matching 01" as_grp="[1,1,2]" as_ord="2">* Matching 01: Build the ROI from basic regions</c>
+<l as_id="matching" as_name="Matching 01" as_grp="[1,1,2]" as_ord="3">gen_rectangle1 (ModelRegionOut, 309.144, 476.5, 533.61, 764.5)</l>
+<c as_id="matching" as_name="Matching 01" as_grp="[1,1,3]" as_ord="1">* </c>
+<c as_id="matching" as_name="Matching 01" as_grp="[1,1,3]" as_ord="2">* Matching 01: Reduce the model template</c>
+<l as_id="matching" as_name="Matching 01" as_grp="[1,1,3]" as_ord="3">reduce_domain (ImageOut, ModelRegionOut, TemplateImageOut)</l>
+<c as_id="matching" as_name="Matching 01" as_grp="[1,1,4]" as_ord="1">* </c>
+<c as_id="matching" as_name="Matching 01" as_grp="[1,1,4]" as_ord="2">* Matching 01: Create the shape model</c>
+<l as_id="matching" as_name="Matching 01" as_grp="[1,1,4]" as_ord="3">create_scaled_shape_model (TemplateImageOut, 5, rad(0), rad(360), rad(0.9813), 0.95, 1.05, 0.0171, ['none','no_pregeneration'], 'use_polarity', [39,50,11], 4, ModelID)</l>
+<l>return ()</l>
+</body>
+<docu id="createTemplateImg">
+<parameters>
+<parameter id="Image"/>
+<parameter id="ModelID"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="scaled_shape_match">
+<interface>
+<io>
+<par name="Image" base_type="iconic" dimension="0"/>
+</io>
+<ic>
+<par name="ModelID" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="Row" base_type="ctrl" dimension="0"/>
+<par name="Column" base_type="ctrl" dimension="0"/>
+<par name="Angle" base_type="ctrl" dimension="0"/>
+<par name="Scale" base_type="ctrl" dimension="0"/>
+<par name="Score" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>find_scaled_shape_model (Image, ModelID, rad(0), rad(360), 0.95, 1.05, 0.5, 0, 0.5, 'least_squares', [5,1], 0.75, Row, Column, Angle, Scale, Score)</l>
+<l>return ()</l>
+</body>
+<docu id="scaled_shape_match">
+<parameters>
+<parameter id="Angle"/>
+<parameter id="Column"/>
+<parameter id="Image"/>
+<parameter id="ModelID"/>
+<parameter id="Row"/>
+<parameter id="Scale"/>
+<parameter id="Score"/>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>
