@@ -147,7 +147,7 @@
   <ItemGroup>
     <ClCompile Include="HalconMatcher.cpp" />
     <ClCompile Include="ScaledShapeMatch.cpp" />
-    <ClCompile Include="源1.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HalconMatcher.h" />
