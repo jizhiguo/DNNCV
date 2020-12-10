@@ -3,21 +3,21 @@
 #include "ThreadPool.h"
 #include <HDevEngineCpp.h>
 #include <list>
+
 using namespace HalconCpp;
 
 class HalconMatcher
 {
 public:
 	/// <summary>
-	/// 准备模板。
+	/// 增加模板。
 	/// </summary>
 	/// <param name="itemppath">模板图片路径</param>
 	/// <returns>模板个数</returns>
 	int addModel(std::string imgTemplatePath);
-	int clearAllModel();
 
 	/// <summary>
-	/// 搜索源图。
+	/// 使用模板来匹配源图，返回各个模板的匹配结果。
 	/// </summary>
 	/// <param name="imgSrc">源图</param>
 	/// <returns>模板编号对应比特置位。
@@ -34,20 +34,14 @@ public:
 	///                      |   |   +--------0号模板没有匹配
 	///                      |   +------------1号模板有匹配
 	///                      +----------------2号模板有匹配
+	///             ..........................n号模板有没有匹配？
 	/// </returns>
-	int doMatching(HObject& imgSrc);
+	int doMatching(HObject const& imgSrc);
 
 	HalconMatcher();
-	~HalconMatcher();
 
 private:
-	void doMatching(HTuple& ModelID, HObject& image, HTuple& rows, HTuple& cols, HTuple& angles, HTuple& scales, HTuple& scores);
-
-private:
-	std::string itemppath;
-	std::string imgpath;
-	std::string resourcePath;
-	std::list<HTuple> models;
+	std::vector<HTuple> models;
 	ThreadPool pool;
 };
 
