@@ -5,7 +5,7 @@
 <body>
 <l>read_image (Image, 'printer_chip/printer_chip_01')</l>
 <l>createTemplateImg (Image, ModelID)</l>
-<l>scaled_shape_match (Image, ModelID, Row, Column, Angle, Scale, Score)</l>
+<l>scaledShapeMatch (Image, ModelID, Row, Column, Angle, Scale, Score)</l>
 <c as_id="matching" as_name="Matching 01" as_grp="[12]" as_ord="4"></c>
 </body>
 <docu id="main">
@@ -44,7 +44,7 @@
 </parameters>
 </docu>
 </procedure>
-<procedure name="scaled_shape_match">
+<procedure name="scaledShapeMatch">
 <interface>
 <io>
 <par name="Image" base_type="iconic" dimension="0"/>
@@ -64,7 +64,7 @@
 <l>find_scaled_shape_model (Image, ModelID, rad(0), rad(360), 0.95, 1.05, 0.5, 0, 0.5, 'least_squares', [5,1], 0.75, Row, Column, Angle, Scale, Score)</l>
 <l>return ()</l>
 </body>
-<docu id="scaled_shape_match">
+<docu id="scaledShapeMatch">
 <parameters>
 <parameter id="Angle"/>
 <parameter id="Column"/>

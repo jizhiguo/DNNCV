@@ -28,7 +28,7 @@ namespace ScaledShapeMatch {
     HalconCpp::HTuple* ModelID);
 
 
-  void scaled_shape_match(
+  void scaledShapeMatch(
     HalconCpp::HObject const& Image,
     HalconCpp::HTuple const& ModelID,
     HalconCpp::HTuple* Row,
