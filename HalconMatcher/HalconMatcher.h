@@ -38,7 +38,12 @@ public:
 	/// </returns>
 	int doMatching(HObject const& imgSrc);
 
+
 	HalconMatcher();
+
+private:
+	void doMatching(const HObject& imgSrc, const HTuple& model,
+		HTuple& rows, HTuple& cols, HTuple& angles, HTuple& scales, HTuple& scores);
 
 private:
 	std::vector<HTuple> models;

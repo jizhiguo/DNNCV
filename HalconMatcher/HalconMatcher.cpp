@@ -39,10 +39,10 @@ int HalconMatcher::doMatching(HObject const& imgSrc)
 	for (size_t i = 0; i < len; i++) {
 		HTuple  rows, cols, angles, scales, scores;
 		auto f = [this, imgSrc, i, &rows, &cols, &angles, &scales, &scores](size_t modelID) {
-			ScaledShapeMatch::scaledShapeMatch(imgSrc, models[i], &rows, &cols, &angles, &scales, &scores);
+			doMatching(imgSrc, models[i], rows, cols, angles, scales, scores);
 			return std::make_pair(modelID, scores);
 		};
-		futureResults.emplace_back(pool.enqueue(f, i));//start a task for every single model.
+		futureResults.emplace_back(pool.enqueue(f, i));//start a matching task for every single model.
 	}
 
 	byte bits = 0;
@@ -65,4 +65,16 @@ int HalconMatcher::doMatching(HObject const& imgSrc)
 	}
 
 	return bits;
+}
+
+void HalconMatcher::doMatching(const HalconCpp::HObject& imgSrc, const HTuple& model, 
+	HTuple& rows, HTuple& cols, HTuple& angles, HTuple& scales, HTuple& scores)
+{
+	long t1 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+	static std::mutex queue_mutex;
+	std::unique_lock<std::mutex> lock(queue_mutex);
+	ScaledShapeMatch::scaledShapeMatch(imgSrc, model, &rows, &cols, &angles, &scales, &scores);
+	long t2 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+	std::cout << "\nThreadID::" << std::this_thread::get_id();
+	std::cout << ",matching time elapsed:" << t2 - t1 << "ms" << std::endl;
 }

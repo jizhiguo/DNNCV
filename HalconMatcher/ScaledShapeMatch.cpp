@@ -167,28 +167,23 @@ namespace ScaledShapeMatch {
     HalconCpp::HTuple* Scale,
     HalconCpp::HTuple* Score)
   {     
-long      t1 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+      static HDevEngineCpp::HDevProcedure procedure(GetProgram(sgResourcePath+"scaled_shape_match.hdev"),"scaledShapeMatch");
+      HDevEngineCpp::HDevProcedureCall call = procedure;
+      ParamHandler<HalconCpp::HObject>::SetParameter(call, "Image", Image);
+      ParamHandler<HalconCpp::HTuple>::SetParameter(call, "ModelID", ModelID);
 
-    static HDevEngineCpp::HDevProcedure procedure(GetProgram(sgResourcePath+"scaled_shape_match.hdev"),"scaledShapeMatch");
-    HDevEngineCpp::HDevProcedureCall call=procedure;
-    ParamHandler<HalconCpp::HObject>::SetParameter(call,"Image",Image);
-    ParamHandler<HalconCpp::HTuple>::SetParameter(call,"ModelID",ModelID);
-        
-    call.Execute();
+      call.Execute();
 
-    if (Row != nullptr)
-      * Row = ParamHandler<HalconCpp::HTuple>::GetParameter(call,"Row");
-    if (Column != nullptr)
-      * Column = ParamHandler<HalconCpp::HTuple>::GetParameter(call,"Column");
-    if (Angle != nullptr)
-      * Angle = ParamHandler<HalconCpp::HTuple>::GetParameter(call,"Angle");
-    if (Scale != nullptr)
-      * Scale = ParamHandler<HalconCpp::HTuple>::GetParameter(call,"Scale");
-    if (Score != nullptr)
-      * Score = ParamHandler<HalconCpp::HTuple>::GetParameter(call,"Score");
-      long      t2 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-      std::cout << "\nThreadID::" << std::this_thread::get_id();
-      std::cout << ",matching time elapsed:" << t2 - t1 << "ms" << std::endl;
+      if (Row != nullptr)
+          *Row = ParamHandler<HalconCpp::HTuple>::GetParameter(call, "Row");
+      if (Column != nullptr)
+          *Column = ParamHandler<HalconCpp::HTuple>::GetParameter(call, "Column");
+      if (Angle != nullptr)
+          *Angle = ParamHandler<HalconCpp::HTuple>::GetParameter(call, "Angle");
+      if (Scale != nullptr)
+          *Scale = ParamHandler<HalconCpp::HTuple>::GetParameter(call, "Scale");
+      if (Score != nullptr)
+          *Score = ParamHandler<HalconCpp::HTuple>::GetParameter(call, "Score");
   }
 
 };
