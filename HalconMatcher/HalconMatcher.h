@@ -38,6 +38,12 @@ public:
 	/// </returns>
 	int doMatching(HObject const& imgSrc);
 
+	/// <summary>
+	/// 设置Halcon脚本文件路径。
+	/// </summary>
+	/// <param name="halconResourcePath">Halcon脚本路径</param>
+	/// <returns>原路径</returns>
+	std::string setHalResPath(std::string halconResourcePath);
 
 	HalconMatcher();
 

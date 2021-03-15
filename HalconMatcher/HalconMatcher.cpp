@@ -4,9 +4,16 @@
 
 using namespace HDevEngineCpp;
 
+std::string HalconMatcher::setHalResPath(std::string halconResourcePath)
+{
+	ScaledShapeMatch::SetResourcePath(halconResourcePath.c_str());
+	return std::string();
+}
+
 HalconMatcher::HalconMatcher()
 {
-	std::string resourcePath = "C:/Users/admin/source/repos/DNNCV/HalconMatcher";
+	//std::string resourcePath = "C:/Users/jizhi/source/repos/DNNCV/HalconMatcher";
+	std::string resourcePath = "./";
 	ScaledShapeMatch::SetResourcePath(resourcePath.c_str());
 	//  "execute_procedures_jit_compiled"  [default: false, 0]
 	//     - if set to true (or "true"), procedures are tried to being compiled
