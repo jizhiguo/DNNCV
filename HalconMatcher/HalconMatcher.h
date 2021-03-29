@@ -17,6 +17,13 @@ public:
 	int addModel(std::string imgTemplatePath);
 
 	/// <summary>
+	/// doMatching的单线程版本，参数含义见doMatching
+	/// </summary>
+	/// <param name="imgSrc"></param>
+	/// <returns></returns>
+	int doMatchingSingleThread(HObject const& imgSrc);
+
+	/// <summary>
 	/// 使用模板来匹配源图，返回各个模板的匹配结果。
 	/// </summary>
 	/// <param name="imgSrc">源图</param>

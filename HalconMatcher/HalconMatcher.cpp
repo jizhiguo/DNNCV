@@ -39,6 +39,30 @@ int HalconMatcher::addModel(std::string imgTemplatePath)
 	return models.size();
 }
 
+int HalconMatcher::doMatchingSingleThread(HObject const& imgSrc)
+{
+	byte bits = 0;
+	double threshold = 0.8;
+	double score = 0;
+	size_t len = models.size();
+	for (size_t i = 0; i < len; i++) {
+		HTuple  rows, cols, angles, scales, scores;
+		score = 0;
+		try
+		{
+			doMatching(imgSrc, models[i], rows, cols, angles, scales, scores);
+			score = scores[0].D();
+			if (score > threshold) { bits |= 1 << i; }
+
+		}
+		catch (...)
+		{
+			std::cout << "Exception in getting matched result of modelID£º" << i << std::endl;
+		}
+	}
+	return bits;
+}
+
 int HalconMatcher::doMatching(HObject const& imgSrc)
 {
 	std::vector< std::future<std::pair<size_t, HTuple>> > futureResults;
